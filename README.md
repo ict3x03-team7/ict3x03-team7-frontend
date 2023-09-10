@@ -1,5 +1,7 @@
 # React + Vite
-
+```
+This project is using Javascript + SWC
+```
 ## HOW TO RUN
 ```
 npm i
