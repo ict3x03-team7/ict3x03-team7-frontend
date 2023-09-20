@@ -45,7 +45,7 @@ function Navbar() {
           </Typography>
 
           <Link to="/Recipes" style={{ color: "black" }}>
-            <Button color="inherit">My Recipes</Button>
+            <Button color="inherit">Search Recipe</Button>
           </Link>
 
           <Link to="/Dashboard" style={{ color: "black" }}>

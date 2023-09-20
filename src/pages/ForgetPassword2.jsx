@@ -44,6 +44,9 @@ function ForgetPassword2() {
   const gotoLoginStudentStaff = () => {
     navigate("/LoginStudentStaff");
   };
+  const gotoVerificationPage = () => {
+    navigate("/LoginVerification");
+  };
   const gotoLogin = () => {
     navigate("/");
   };
@@ -131,12 +134,16 @@ function ForgetPassword2() {
             variant="outlined"
             size="medium"
             style={{ marginRight: "15px" }}
-            onClick={gotoLoginStudentStaff}
+            onClick={gotoLogin}
           >
             Cancel
           </Button>
 
-          <Button variant="contained" size="medium" onClick={gotoLogin}>
+          <Button
+            variant="contained"
+            size="medium"
+            onClick={gotoVerificationPage}
+          >
             Submit
           </Button>
         </div>

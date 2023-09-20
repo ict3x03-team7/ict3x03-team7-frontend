@@ -12,6 +12,7 @@ import ForgetPassword2 from "./pages/ForgetPassword2";
 import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
 import Dashboard from "./pages/Dashboard";
+import SearchRecipeResults from "./pages/SearchRecipeResults";
 
 const appStyle = {
   display: "flex",
@@ -49,6 +50,10 @@ const App = () => {
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Logout" element={<Logout />} />
+            <Route
+              path="/SearchRecipeResults"
+              element={<SearchRecipeResults />}
+            />
           </Routes>
         </div>
 

@@ -14,9 +14,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { useNavigate } from "react-router-dom";
 
-function Recipes() {
+function SearchRecipeResults() {
   const recipeData = [
     {
       id: 1,
@@ -76,11 +75,6 @@ function Recipes() {
     setOpenModal(false);
   };
 
-  let navigate = useNavigate();
-  const gotoSearchRecipeResults = () => {
-    navigate("/SearchRecipeResults");
-  };
-
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   useEffect(() => {
@@ -136,18 +130,14 @@ function Recipes() {
               }
             />
           </FormControl>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={gotoSearchRecipeResults}
-          >
+          <Button variant="contained" color="primary">
             Search
           </Button>
         </div>
       </div>
       <div style={{ marginBottom: "100px" }}>
         <h1 style={{ textAlign: "left", marginBottom: "40px" }}>
-          Recommended For You
+          Your Search Results
         </h1>
 
         <Grid container spacing={2}>
@@ -327,4 +317,4 @@ function Recipes() {
   );
 }
 
-export default Recipes;
+export default SearchRecipeResults;
