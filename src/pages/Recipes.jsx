@@ -15,6 +15,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
 
 function Recipes() {
   const recipeData = [
@@ -76,9 +77,18 @@ function Recipes() {
     setOpenModal(false);
   };
 
+  const [searchText, setsearchText] = useState("");
+  const [searchTextError, setsearchTextError] = useState("");
+
   let navigate = useNavigate();
   const gotoSearchRecipeResults = () => {
-    navigate("/SearchRecipeResults");
+    // Check if the search text is empty
+    if (!searchText) {
+      setsearchTextError("Search text cannot be empty");
+    } else {
+      // Proceed with verification logic here...
+      navigate("/SearchRecipeResults");
+    }
   };
 
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -127,6 +137,8 @@ function Recipes() {
               variant="outlined"
               placeholder="Search a recipe here"
               sx={{ marginRight: 1 }}
+              value={searchText}
+              onChange={(e) => setsearchText(e.target.value)}
               startAdornment={
                 <InputAdornment position="start">
                   <IconButton aria-label="opt code icon">
@@ -144,6 +156,11 @@ function Recipes() {
             Search
           </Button>
         </div>
+        {searchTextError && (
+          <Alert severity="error" style={{ marginTop: "5px" }}>
+            {searchTextError}
+          </Alert>
+        )}
       </div>
       <div style={{ marginBottom: "100px" }}>
         <h1 style={{ textAlign: "left", marginBottom: "40px" }}>

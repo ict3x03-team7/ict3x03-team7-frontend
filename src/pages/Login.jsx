@@ -61,6 +61,46 @@ function Login() {
     navigate("/Register");
   };
 
+  const validateInputs = () => {
+    let valid = true;
+
+    // Email validation
+    const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+    if (!email.match(emailRegex)) {
+      setEmailError("Invalid email format");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    // Password validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password must meet the specified criteria.");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (password.length < 12) {
+      setPasswordError("Password must be at least 12 characters");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    // Confirm password validation
+    if (password !== confirmedPassword) {
+      setConfirmedPasswordError("Passwords do not match");
+      valid = false;
+    } else {
+      setConfirmedPasswordError("");
+    }
+
+    return valid;
+  };
+
   return (
     <div style={containerStyle}>
       <Paper style={boxStyle}>

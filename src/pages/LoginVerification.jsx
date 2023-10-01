@@ -32,10 +32,31 @@ function LoginVerification() {
     setIsHoveredLink(false);
   };
 
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+
   let navigate = useNavigate();
   const recipeButton = () => {
-    navigate("/Recipes");
+    if (!otp) {
+      setOtpError("Verification code is required");
+    } else if (!/^[0-9]{6}$/.test(otp)) {
+      setOtpError("Verification code should be a 6-digit number");
+    } else {
+      // Proceed with verification logic here...
+      navigate("/Recipes");
+    }
   };
+
+  const handleOtpChange = (e) => {
+    const input = e.target.value;
+    if (/^[0-9]*$/.test(input) && input.length <= 6) {
+      setOtp(input);
+      setOtpError("");
+    } else {
+      setOtpError("Invalid input");
+    }
+  };
+
   const chooseLoginAccountButton = () => {
     navigate("/");
   };
@@ -63,6 +84,8 @@ function LoginVerification() {
             id="optCode"
             type="text"
             placeholder="Enter Verification Code"
+            value={otp}
+            onChange={handleOtpChange}
             startAdornment={
               <InputAdornment position="start">
                 <IconButton aria-label="opt code icon">
@@ -72,6 +95,11 @@ function LoginVerification() {
             }
           />
         </FormControl>
+        {otpError && (
+          <Alert severity="error" style={{ marginTop: "5px" }}>
+            {otpError}
+          </Alert>
+        )}
 
         <br />
         <br />

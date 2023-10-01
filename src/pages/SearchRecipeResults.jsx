@@ -14,6 +14,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import Alert from "@mui/material/Alert";
+import { useNavigate } from "react-router-dom";
 
 function SearchRecipeResults() {
   const recipeData = [
@@ -104,6 +106,20 @@ function SearchRecipeResults() {
     });
   };
 
+  const [searchText, setsearchText] = useState("");
+  const [searchTextError, setsearchTextError] = useState("");
+
+  let navigate = useNavigate();
+  const gotoSearchRecipeResults = () => {
+    // Check if the search text is empty
+    if (!searchText) {
+      setsearchTextError("Search text cannot be empty");
+    } else {
+      // Proceed with verification logic here...
+      navigate("/SearchRecipeResults");
+    }
+  };
+
   return (
     <div>
       <div style={{ marginBottom: "100px" }}>
@@ -121,6 +137,8 @@ function SearchRecipeResults() {
               variant="outlined"
               placeholder="Search a recipe here"
               sx={{ marginRight: 1 }}
+              value={searchText}
+              onChange={(e) => setsearchText(e.target.value)}
               startAdornment={
                 <InputAdornment position="start">
                   <IconButton aria-label="opt code icon">
@@ -130,10 +148,19 @@ function SearchRecipeResults() {
               }
             />
           </FormControl>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={gotoSearchRecipeResults}
+          >
             Search
           </Button>
         </div>
+        {searchTextError && (
+          <Alert severity="error" style={{ marginTop: "5px" }}>
+            {searchTextError}
+          </Alert>
+        )}
       </div>
       <div style={{ marginBottom: "100px" }}>
         <h1 style={{ textAlign: "left", marginBottom: "40px" }}>

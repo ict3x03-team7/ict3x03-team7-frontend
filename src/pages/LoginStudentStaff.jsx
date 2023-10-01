@@ -13,6 +13,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import "../css/style.css"; // Import custom CSS here
 import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
 
 function LoginStudentStaff() {
   const containerStyle = {
@@ -30,6 +31,10 @@ function LoginStudentStaff() {
   };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -56,9 +61,36 @@ function LoginStudentStaff() {
   const chooseLoginAccountButton = () => {
     navigate("/");
   };
+
   const loginVerificationButton = () => {
-    navigate("/LoginVerification");
+    let valid = true;
+
+    // Clear any previous error messages
+    setEmailError("");
+    setPasswordError("");
+
+    // Email validation
+    const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+    if (!email.match(emailRegex)) {
+      setEmailError("Invalid email format");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (valid) {
+      // Proceed with login verification logic only if valid is true
+      navigate("/LoginVerification");
+    }
   };
+
   const gotoRegisterPage = () => {
     navigate("/Register");
   };
@@ -88,6 +120,7 @@ function LoginStudentStaff() {
         <br />
 
         {/* Email TextField with Icon */}
+        <p>Email:</p>
         <FormControl sx={{ width: "100%" }} size="small">
           <OutlinedInput
             id="email"
@@ -100,13 +133,22 @@ function LoginStudentStaff() {
                 </IconButton>
               </InputAdornment>
             }
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
+        {emailError && (
+          <Alert severity="error" style={{ marginTop: "5px" }}>
+            {emailError}
+          </Alert>
+        )}
 
         <br />
         <br />
 
         {/* Password TextField with Icon */}
+        <p>Password:</p>
+
         <FormControl sx={{ width: "100%" }} size="small">
           <OutlinedInput
             id="outlined-adornment-password"
@@ -131,8 +173,15 @@ function LoginStudentStaff() {
                 </IconButton>
               </InputAdornment>
             }
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </FormControl>
+        {passwordError && (
+          <Alert severity="error" style={{ marginTop: "5px" }}>
+            {passwordError}
+          </Alert>
+        )}
 
         <br />
         <br />
@@ -177,7 +226,7 @@ function LoginStudentStaff() {
           </Link>
 
           <p>
-            Dont have an account yet?{" "}
+            Don't have an account yet?{" "}
             <Link
               style={{
                 color: isHoveredLink ? "maroon" : "blue",

@@ -19,6 +19,7 @@ import TableCell from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import Alert from "@mui/material/Alert";
 
 function Dashboard() {
   const columnStyle = {
@@ -45,13 +46,36 @@ function Dashboard() {
 
   const [role, setRole] = React.useState(""); // State for Roles dropdown
   const [status, setStatus] = React.useState(""); // State for Account Status dropdown
+  const [filterError, setFilterError] = useState("");
 
   const handleRoleChange = (event) => {
+    setFilterError("");
     setRole(event.target.value);
   };
 
   const handleStatusChange = (event) => {
+    setFilterError("");
     setStatus(event.target.value);
+  };
+
+  const handleSearch = () => {
+    // Check if either role or status is not "None"
+    if (role === "" && status === "") {
+      // Perform the search action
+      setFilterError(
+        "Please select at least one filter (Roles or Account Status)"
+      );
+    } else {
+      // Show an error message or handle the case where both are "None"
+      setFilterError("");
+    }
+  };
+
+  const handleReset = () => {
+    // Reset both role and status to "None"
+    setRole("");
+    setStatus("");
+    setFilterError("");
   };
 
   // Sample data
@@ -284,14 +308,19 @@ function Dashboard() {
           variant="contained"
           size="medium"
           style={{ marginRight: "15px" }}
+          onClick={handleSearch}
         >
           Search
         </Button>
-        <Button variant="outlined" size="medium">
+        <Button variant="outlined" size="medium" onClick={handleReset}>
           Reset
         </Button>
       </div>
-
+      {filterError && (
+        <Alert severity="error" style={{ marginTop: "5px" }}>
+          {filterError}
+        </Alert>
+      )}
       <br />
       <br />
 

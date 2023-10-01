@@ -40,15 +40,62 @@ function ForgetPassword2() {
     event.preventDefault();
   };
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmedPasswordError, setConfirmedPasswordError] = useState("");
+
   let navigate = useNavigate();
   const gotoLoginStudentStaff = () => {
     navigate("/LoginStudentStaff");
   };
   const gotoVerificationPage = () => {
-    navigate("/LoginVerification");
+    // Check if input is valid before navigating
+    if (validateInputs()) {
+      navigate("/LoginVerification");
+    }
   };
   const gotoLogin = () => {
     navigate("/");
+  };
+
+  const validateInputs = () => {
+    let valid = true;
+
+    // Email validation
+    const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+    if (!email.match(emailRegex)) {
+      setEmailError("Invalid email format");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    // Password validation
+    // Password validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password must meet the specified criteria.");
+      valid = false;
+    } else if (password.length < 12) {
+      setPasswordError("Password must be at least 12 characters");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    // Confirm password validation
+    if (password !== confirmedPassword) {
+      setConfirmedPasswordError("Passwords do not match");
+      valid = false;
+    } else {
+      setConfirmedPasswordError("");
+    }
+
+    return valid;
   };
 
   return (
@@ -68,22 +115,27 @@ function ForgetPassword2() {
         </div>
 
         <p style={{ textAlign: "center" }}>
-          Enter your email and new password and we'll help you to reset your
+          Enter your email and new password, and we'll help you reset your
           password.
         </p>
-
-        <div style={{ marginTop: "30px", marginBottom: "10px" }}>
-          <Alert severity="success">Password Changed Successfully!</Alert>
-          <Alert severity="error">
-            New Password and Confirm Password do not match
-          </Alert>
-        </div>
 
         <div style={{ marginTop: "30px", marginBottom: "30px" }}>
           {/* Email TextField with Icon */}
           <p>Email:</p>
           <FormControl sx={{ width: "100%" }} size="small">
-            <OutlinedInput id="email" type="text" placeholder="Enter email" />
+            <OutlinedInput
+              id="email"
+              type="text"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!emailError}
+            />
+            {emailError && (
+              <Alert severity="error" style={{ marginTop: "5px" }}>
+                {emailError}
+              </Alert>
+            )}
           </FormControl>
 
           <p>New Password:</p>
@@ -92,6 +144,9 @@ function ForgetPassword2() {
               id="outlined-adornment-password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!passwordError}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -105,6 +160,11 @@ function ForgetPassword2() {
                 </InputAdornment>
               }
             />
+            {passwordError && (
+              <Alert severity="error" style={{ marginTop: "5px" }}>
+                {passwordError}
+              </Alert>
+            )}
           </FormControl>
 
           <p>Confirm Password:</p>
@@ -113,6 +173,9 @@ function ForgetPassword2() {
               id="outlined-adornment-confirmed-password"
               type={showPassword2 ? "text" : "password"}
               placeholder="Enter Confirmed Password"
+              value={confirmedPassword}
+              onChange={(e) => setConfirmedPassword(e.target.value)}
+              error={!!confirmedPasswordError}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -126,6 +189,11 @@ function ForgetPassword2() {
                 </InputAdornment>
               }
             />
+            {confirmedPasswordError && (
+              <Alert severity="error" style={{ marginTop: "5px" }}>
+                {confirmedPasswordError}
+              </Alert>
+            )}
           </FormControl>
         </div>
 
