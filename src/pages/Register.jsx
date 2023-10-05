@@ -16,6 +16,8 @@ import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 
+import DeleteIcon from "@mui/icons-material/Delete";
+
 function Register() {
   const containerStyle = {
     display: "flex",
@@ -201,6 +203,28 @@ function Register() {
     return valid;
   };
 
+  // profile picture
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Function to handle file selection
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check if the selected file is an image or GIF
+      if (file.type.startsWith("image/") || file.type === "image/gif") {
+        setSelectedFile(file);
+      } else {
+        // Invalid file type, you can display an error message here
+        console.error("Invalid file type. Please select an image or GIF.");
+      }
+    }
+  };
+
+  // Function to remove the selected image
+  const handleRemoveImage = () => {
+    setSelectedFile(null); // Clear the selectedFile state to remove the image
+  };
+
   return (
     <div style={containerStyle}>
       <Paper style={boxStyle}>
@@ -217,10 +241,18 @@ function Register() {
         <br />
 
         {/* Default Profile Pic */}
-        <Avatar
-          alt="Profile Pic"
-          sx={{ width: 150, height: 150, margin: "0 auto" }}
-        />
+        {selectedFile ? (
+          <Avatar
+            alt="Profile Pic"
+            src={URL.createObjectURL(selectedFile)}
+            sx={{ width: 150, height: 150, margin: "0 auto" }}
+          />
+        ) : (
+          <Avatar
+            alt="Profile Pic"
+            sx={{ width: 150, height: 150, margin: "0 auto" }}
+          />
+        )}
 
         <br />
         <br />
@@ -355,12 +387,27 @@ function Register() {
             component="label"
             variant="contained"
             startIcon={<CloudUploadIcon />}
-            href="#file-upload"
           >
             Upload a file
-            <VisuallyHiddenInput type="file" />
+            <input
+              type="file"
+              style={{ display: "none" }}
+              accept="image/*,.gif"
+              onChange={handleFileChange}
+            />
           </Button>
-          <p style={{ marginLeft: "20px", color: "blue" }}>myprofilepic.jpg</p>
+          {selectedFile && ( // Display the "Remove" button if an image is selected
+            <Button
+              style={{ backgroundColor: "red", marginLeft: "20px" }}
+              variant="contained"
+              onClick={handleRemoveImage}
+            >
+              <DeleteIcon />
+            </Button>
+          )}
+          <p style={{ marginLeft: "20px", color: "blue" }}>
+            {selectedFile ? selectedFile.name : "No file selected"}
+          </p>
         </div>
 
         <br />
