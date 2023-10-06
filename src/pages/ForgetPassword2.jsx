@@ -129,6 +129,12 @@ function ForgetPassword2() {
               placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onInput={(e) => {
+                if (e.target.value.length > 100) {
+                  e.target.value = e.target.value.slice(0, 100);
+                }
+                setEmail(e.target.value);
+              }}
               error={!!emailError}
             />
             {emailError && (
@@ -146,6 +152,12 @@ function ForgetPassword2() {
               placeholder="Enter Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onInput={(e) => {
+                if (e.target.value.length > 100) {
+                  e.target.value = e.target.value.slice(0, 100);
+                }
+                setPassword(e.target.value);
+              }}
               error={!!passwordError}
               endAdornment={
                 <InputAdornment position="end">
@@ -175,6 +187,12 @@ function ForgetPassword2() {
               placeholder="Enter Confirmed Password"
               value={confirmedPassword}
               onChange={(e) => setConfirmedPassword(e.target.value)}
+              onInput={(e) => {
+                if (e.target.value.length > 100) {
+                  e.target.value = e.target.value.slice(0, 100);
+                }
+                setConfirmedPassword(e.target.value);
+              }}
               error={!!confirmedPasswordError}
               endAdornment={
                 <InputAdornment position="end">

@@ -126,6 +126,12 @@ function LoginStudentStaff() {
             id="email"
             type="text"
             placeholder="Enter email"
+            onInput={(e) => {
+              if (e.target.value.length > 100) {
+                e.target.value = e.target.value.slice(0, 100);
+              }
+              setEmail(e.target.value);
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <IconButton aria-label="email icon">
@@ -148,12 +154,17 @@ function LoginStudentStaff() {
 
         {/* Password TextField with Icon */}
         <p>Password:</p>
-
         <FormControl sx={{ width: "100%" }} size="small">
           <OutlinedInput
             id="outlined-adornment-password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
+            onInput={(e) => {
+              if (e.target.value.length > 100) {
+                e.target.value = e.target.value.slice(0, 100);
+              }
+              setPassword(e.target.value);
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <IconButton aria-label="password icon">

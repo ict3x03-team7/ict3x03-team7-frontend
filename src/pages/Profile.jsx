@@ -306,11 +306,18 @@ function Profile() {
                     type="text"
                     placeholder="Enter Email"
                     value={email}
-                    onChange={handleEmailChange}
-                    onBlur={validateEmail}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 100) {
+                        setEmail(e.target.value);
+                        setEmailError("");
+                      } else {
+                        setEmailError("Email should not exceed 100 characters");
+                      }
+                    }}
+                    error={!!emailError}
                   />
                   {emailError && (
-                    <Alert severity="error" style={{ marginBottom: "10px" }}>
+                    <Alert severity="error" style={{ marginTop: "5px" }}>
                       {emailError}
                     </Alert>
                   )}
@@ -325,8 +332,17 @@ function Profile() {
                     type="text"
                     placeholder="Enter Phone Number"
                     value={phoneNumber}
-                    onChange={handlePhoneNumberChange}
-                    onBlur={validatePhoneNumber}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 8) {
+                        setPhoneNumber(e.target.value);
+                        setPhoneNumberError("");
+                      } else {
+                        setPhoneNumberError(
+                          "Phone Number should not exceed 8 characters"
+                        );
+                      }
+                    }}
+                    error={!!phoneNumberError}
                   />
                   {phoneNumberError && (
                     <Alert severity="error" style={{ marginBottom: "10px" }}>
@@ -424,8 +440,17 @@ function Profile() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter Password"
                     value={password}
-                    onChange={handlePasswordChange}
-                    onBlur={validatePassword}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 100) {
+                        setPassword(e.target.value);
+                        setPasswordError("");
+                      } else {
+                        setPasswordError(
+                          "Password should not exceed 100 characters"
+                        );
+                      }
+                    }}
+                    error={!!passwordError}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -440,7 +465,7 @@ function Profile() {
                     }
                   />
                   {passwordError && (
-                    <Alert severity="error" style={{ marginBottom: "10px" }}>
+                    <Alert severity="error" style={{ marginTop: "5px" }}>
                       {passwordError}
                     </Alert>
                   )}
@@ -455,8 +480,17 @@ function Profile() {
                     type={showPassword2 ? "text" : "password"}
                     placeholder="Enter Confirmed Password"
                     value={confirmedPassword}
-                    onChange={handleConfirmedPasswordChange}
-                    onBlur={validateConfirmedPassword}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 100) {
+                        setConfirmedPassword(e.target.value);
+                        setConfirmedPasswordError("");
+                      } else {
+                        setConfirmedPasswordError(
+                          "Confirmed Password should not exceed 100 characters"
+                        );
+                      }
+                    }}
+                    error={!!confirmedPasswordError}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -471,7 +505,7 @@ function Profile() {
                     }
                   />
                   {confirmedPasswordError && (
-                    <Alert severity="error" style={{ marginBottom: "10px" }}>
+                    <Alert severity="error" style={{ marginTop: "5px" }}>
                       {confirmedPasswordError}
                     </Alert>
                   )}

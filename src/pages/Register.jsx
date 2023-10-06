@@ -265,7 +265,16 @@ function Register() {
                 type="text"
                 placeholder="Enter First Name"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setFirstName(e.target.value);
+                    setFirstNameError("");
+                  } else {
+                    setFirstNameError(
+                      "First Name should not exceed 100 characters"
+                    );
+                  }
+                }}
                 error={!!firstNameError}
               />
               {firstNameError && (
@@ -282,7 +291,16 @@ function Register() {
                 type="text"
                 placeholder="Enter Last Name"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setLastName(e.target.value);
+                    setLastNameError("");
+                  } else {
+                    setLastNameError(
+                      "Last Name should not exceed 100 characters"
+                    );
+                  }
+                }}
                 error={!!lastNameError}
               />
               {lastNameError && <Alert severity="error">{lastNameError}</Alert>}
@@ -299,7 +317,14 @@ function Register() {
                 type="text"
                 placeholder="Enter Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setEmail(e.target.value);
+                    setEmailError("");
+                  } else {
+                    setEmailError("Email should not exceed 100 characters");
+                  }
+                }}
                 error={!!emailError}
               />
               {emailError && (
@@ -318,7 +343,16 @@ function Register() {
                 type="text"
                 placeholder="Enter Phone Number"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 8) {
+                    setPhoneNumber(e.target.value);
+                    setPhoneNumberError("");
+                  } else {
+                    setPhoneNumberError(
+                      "Phone Number should not exceed 8 characters"
+                    );
+                  }
+                }}
                 error={!!phoneNumberError}
               />
               {phoneNumberError && (
@@ -339,7 +373,16 @@ function Register() {
                 type="text"
                 placeholder="Enter School ID"
                 value={studentID}
-                onChange={(e) => setStudentID(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 7) {
+                    setStudentID(e.target.value);
+                    setStudentIDError("");
+                  } else {
+                    setStudentIDError(
+                      "School ID should not exceed 7 characters"
+                    );
+                  }
+                }}
                 error={!!studentIDError}
               />
               {studentIDError && (
@@ -420,7 +463,16 @@ function Register() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setPassword(e.target.value);
+                    setPasswordError("");
+                  } else {
+                    setPasswordError(
+                      "Password should not exceed 100 characters"
+                    );
+                  }
+                }}
                 error={!!passwordError}
                 endAdornment={
                   <InputAdornment position="end">
@@ -451,7 +503,16 @@ function Register() {
                 type={showPassword2 ? "text" : "password"}
                 placeholder="Enter Confirmed Password"
                 value={confirmedPassword}
-                onChange={(e) => setConfirmedPassword(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setConfirmedPassword(e.target.value);
+                    setConfirmedPasswordError("");
+                  } else {
+                    setConfirmedPasswordError(
+                      "Confirmed Password should not exceed 100 characters"
+                    );
+                  }
+                }}
                 error={!!confirmedPasswordError}
                 endAdornment={
                   <InputAdornment position="end">

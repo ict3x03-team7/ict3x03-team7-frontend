@@ -106,16 +106,26 @@ function SearchRecipeResults() {
     });
   };
 
-  const [searchText, setsearchText] = useState("");
-  const [searchTextError, setsearchTextError] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchTextError, setSearchTextError] = useState("");
 
   let navigate = useNavigate();
+
+  const handleSearchTextChange = (e) => {
+    const text = e.target.value;
+    if (text.length <= 100) {
+      setSearchText(text);
+      setSearchTextError("");
+    } else {
+      setSearchTextError("Search text should not exceed 100 characters");
+    }
+  };
+
   const gotoSearchRecipeResults = () => {
     // Check if the search text is empty
     if (!searchText) {
-      setsearchTextError("Search text cannot be empty");
-    } else {
-      // Proceed with verification logic here...
+      setSearchTextError("Search text cannot be empty");
+    } else if (searchText.length <= 100) {
       navigate("/SearchRecipeResults");
     }
   };
@@ -138,7 +148,7 @@ function SearchRecipeResults() {
               placeholder="Search a recipe here"
               sx={{ marginRight: 1 }}
               value={searchText}
-              onChange={(e) => setsearchText(e.target.value)}
+              onChange={handleSearchTextChange}
               startAdornment={
                 <InputAdornment position="start">
                   <IconButton aria-label="opt code icon">
