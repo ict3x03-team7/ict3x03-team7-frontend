@@ -15,7 +15,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 
 function Register() {
