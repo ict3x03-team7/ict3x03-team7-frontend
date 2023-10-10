@@ -324,6 +324,13 @@ function SearchRecipeResults() {
                   {ingredient}
                 </Typography>
               ))} */}
+
+              <Typography
+                variant="body2"
+                style={{ marginTop: "30px", marginBottom: "10px" }}
+              >
+                View Full Recipe Here: (add link here){" "}
+              </Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseModal} color="primary">
