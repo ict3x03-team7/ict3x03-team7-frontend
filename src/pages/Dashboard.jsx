@@ -18,6 +18,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
 
@@ -91,7 +92,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 2,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -101,7 +102,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 3,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -111,7 +112,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 4,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -121,7 +122,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 5,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -131,7 +132,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 6,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -141,7 +142,7 @@ function Dashboard() {
       status: "Locked",
     },
     {
-      id: 1,
+      id: 7,
       fullName: "John Doe",
       email: "john@example.com",
       phoneNumber: "123-456-7890",
@@ -194,6 +195,30 @@ function Dashboard() {
       top: 0,
       behavior: "smooth", // Add smooth scrolling behavior
     });
+  };
+
+  // edit icon
+  const [editableRow, setEditableRow] = useState(null);
+  const [updatedStatus, setUpdatedStatus] = useState("");
+
+  // Function to handle the "Edit" button click
+  const handleEditClick = (id) => {
+    setEditableRow(id);
+    // Initialize the updatedStatus with the current status value
+    const row = sampleData.find((row) => row.id === id);
+    setUpdatedStatus(row.status);
+  };
+
+  // Function to handle the "Update" button click
+  const handleUpdate = (id) => {
+    // Handle the update logic here with the selected status (updatedStatus)
+    // After updating, you can set editableRow back to null to exit the edit mode
+    setEditableRow(null);
+  };
+
+  // Function to handle the "Cancel" button click
+  const handleCancelEdit = () => {
+    setEditableRow(null);
   };
 
   return (
@@ -353,11 +378,52 @@ function Dashboard() {
                     <TableCell>{row.studentId}</TableCell>
                     <TableCell>{row.gender}</TableCell>
                     <TableCell>{row.role}</TableCell>
-                    <TableCell>{row.status}</TableCell>
                     <TableCell>
-                      <IconButton color="primary" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
+                      {editableRow === row.id ? (
+                        <Select
+                          size="small"
+                          value={updatedStatus}
+                          onChange={(e) => setUpdatedStatus(e.target.value)}
+                        >
+                          <MenuItem value="Locked">Locked</MenuItem>
+                          <MenuItem value="Unlocked">Unlocked</MenuItem>
+                        </Select>
+                      ) : (
+                        row.status
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editableRow === row.id ? (
+                        <div>
+                          <Button
+                            color="primary"
+                            onClick={() => handleUpdate(row.id)}
+                          >
+                            Update
+                          </Button>
+                          <Button
+                            color="secondary"
+                            onClick={() => handleCancelEdit()}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          {editableRow === null ? (
+                            <IconButton
+                              color="primary"
+                              aria-label="edit"
+                              onClick={() => handleEditClick(row.id)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          ) : null}
+                          <IconButton color="primary" aria-label="delete">
+                            <DeleteIcon />
+                          </IconButton>
+                        </div>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
