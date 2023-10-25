@@ -403,6 +403,8 @@ function Register() {
                 onChange={handleGenderChange}
                 error={!!genderError}
                 displayEmpty // Display the empty option
+                data-testid="gender-select" 
+
               >
                 <MenuItem value="">
                   <em style={{ color: "#c1c1c1" }}>- Select A Gender -</em>
