@@ -144,7 +144,7 @@ function LoginStudentStaff() {
           />
         </FormControl>
         {emailError && (
-          <Alert severity="error" style={{ marginTop: "5px" }}>
+          <Alert severity="error" style={{ marginTop: "5px" }} data-testid="email-error">
             {emailError}
           </Alert>
         )}
@@ -189,7 +189,7 @@ function LoginStudentStaff() {
           />
         </FormControl>
         {passwordError && (
-          <Alert severity="error" style={{ marginTop: "5px" }}>
+          <Alert severity="error" style={{ marginTop: "5px" }} data-testid="password-error">
             {passwordError}
           </Alert>
         )}
