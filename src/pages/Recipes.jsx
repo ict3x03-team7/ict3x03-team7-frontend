@@ -355,7 +355,7 @@ function Recipes() {
             zIndex: 1000,
           }}
         >
-          <ArrowUpwardIcon /> {/* Replace text with the ArrowUpward icon */}
+          <ArrowUpwardIcon data-testid="upward-icon"/> {/* Replace text with the ArrowUpward icon */}
         </Button>
       )}
     </div>
