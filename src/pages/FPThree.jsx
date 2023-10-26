@@ -10,8 +10,10 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
-function ForgetPassword2() {
+function FPThree() {
   const containerStyle = {
     display: "flex",
     justifyContent: "center",
@@ -40,43 +42,57 @@ function ForgetPassword2() {
     event.preventDefault();
   };
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmedPasswordError, setConfirmedPasswordError] = useState("");
 
   let navigate = useNavigate();
-  const gotoLoginStudentStaff = () => {
-    navigate("/LoginStudentStaff");
-  };
-  const gotoVerificationPage = () => {
-    // Check if input is valid before navigating
-    if (validateInputs()) {
-      navigate("/LoginVerification");
-    }
-  };
-  const gotoLogin = () => {
-    navigate("/");
+
+  // go to FP2
+  const gotoFPTwo = () => {
+    navigate("/FPTwo");
   };
 
-  const validateInputs = () => {
+  const gotoLogin = async () => {
+    if (verifyPassword()) {
+      try {
+        const getparseemail = location.state.email; // Get the email from the location state
+
+        console.log(getparseemail, password);
+        // Make an API call to reset the password
+        const response = await axios.post(
+          "http://localhost:8085/api/v1/auth/resetpassword",
+          {
+            email: getparseemail,
+            newPassword: password, // Use the new password entered by the user
+          }
+        );
+        console.log(response);
+
+        if (response.status === 200 && response.data.result.isSuccess) {
+          // Password reset was successful; you can navigate to a success page or login page
+          navigate("/");
+        } else {
+          // Handle the case where the password reset was not successful or other errors
+          console.log("Password reset failed.");
+        }
+      } catch (error) {
+        // Handle network errors or API errors
+        console.error("API Error:", error);
+      }
+    }
+  };
+
+  const location = useLocation();
+  console.log("FP3 =>", location.state.email);
+
+  const verifyPassword = () => {
     let valid = true;
 
-    // Email validation
-    const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
-    if (!email.match(emailRegex)) {
-      setEmailError("Invalid email format");
-      valid = false;
-    } else {
-      setEmailError("");
-    }
-
-    // Password validation
     // Password validation
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
     if (!passwordRegex.test(password)) {
       setPasswordError("Password must meet the specified criteria.");
       valid = false;
@@ -114,36 +130,9 @@ function ForgetPassword2() {
           <hr style={{ flex: "1", borderTop: "1px solid grey" }} />
         </div>
 
-        <p style={{ textAlign: "center" }}>
-          Enter your email and new password, and we'll help you reset your
-          password.
-        </p>
+        <p style={{ textAlign: "center" }}>Step 3: Enter your New Password.</p>
 
         <div style={{ marginTop: "30px", marginBottom: "30px" }}>
-          {/* Email TextField with Icon */}
-          <p>Email:</p>
-          <FormControl sx={{ width: "100%" }} size="small">
-            <OutlinedInput
-              id="email"
-              type="text"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onInput={(e) => {
-                if (e.target.value.length > 100) {
-                  e.target.value = e.target.value.slice(0, 100);
-                }
-                setEmail(e.target.value);
-              }}
-              error={!!emailError}
-            />
-            {emailError && (
-              <Alert severity="error" style={{ marginTop: "5px" }}>
-                {emailError}
-              </Alert>
-            )}
-          </FormControl>
-
           <p>New Password:</p>
           <FormControl sx={{ width: "100%" }} size="small">
             <OutlinedInput
@@ -220,16 +209,12 @@ function ForgetPassword2() {
             variant="outlined"
             size="medium"
             style={{ marginRight: "15px" }}
-            onClick={gotoLogin}
+            onClick={gotoFPTwo}
           >
             Cancel
           </Button>
 
-          <Button
-            variant="contained"
-            size="medium"
-            onClick={gotoVerificationPage}
-          >
+          <Button variant="contained" size="medium" onClick={gotoLogin}>
             Submit
           </Button>
         </div>
@@ -238,4 +223,4 @@ function ForgetPassword2() {
   );
 }
 
-export default ForgetPassword2;
+export default FPThree;

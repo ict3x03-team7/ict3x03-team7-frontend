@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import logoImage from "../assets/SITLogo.png";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const navbarStyle = {
   backgroundColor: "white", // White background color
@@ -34,6 +36,47 @@ function Navbar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  let navigate = useNavigate();
+  const gotoProfile = async () => {
+    // navigate("/Profile");
+
+    try {
+      const response = await axios.get(
+        "http://localhost:8085/api/v1/auth/userID",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const userID = response.data.result;
+        console.log("User ID:", userID);
+
+        navigate("/Profile", { state: { userID } });
+      }
+    } catch (error) {
+      console.error("Error fetching user ID:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    axios
+      .post("http://localhost:8085/api/v1/auth/logout", null, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          // Successful logout
+          console.log("Logout successful:", response.data);
+        } else {
+          console.log("Unexpected status code:", response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+      });
   };
 
   return (
@@ -78,18 +121,19 @@ function Navbar() {
             style={{ marginTop: "0px" }}
           >
             <MenuItem onClick={handleClose}>
-              <Link
-                to="/Profile"
+              <Button
+                onClick={gotoProfile}
                 style={{ color: "black", textDecoration: "none" }}
               >
                 My Profile
-              </Link>
+              </Button>
             </MenuItem>
 
             <MenuItem onClick={handleClose}>
               <Link
                 to="/Logout"
                 style={{ color: "black", textDecoration: "none" }}
+                onClick={handleLogout}
               >
                 Logout
               </Link>
