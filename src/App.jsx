@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 import LoginStudentStaff from "./pages/LoginStudentStaff";
 import LoginVerification from "./pages/LoginVerification";
 import Register from "./pages/Register";
-import ForgetPassword2 from "./pages/ForgetPassword2";
 import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
 import Dashboard from "./pages/Dashboard";
@@ -48,7 +47,6 @@ const App = () => {
             <Route path="/LoginStudentStaff" element={<LoginStudentStaff />} />
             <Route path="/LoginVerification" element={<LoginVerification />} />
             <Route path="/Register" element={<Register />} />
-            <Route path="/ForgetPassword2" element={<ForgetPassword2 />} />
 
             <Route path="/FPOne" element={<FPOne />} />
             <Route path="/FPTwo" element={<FPTwo />} />
