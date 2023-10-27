@@ -9,7 +9,7 @@ pipeline {
         }
         stage('OWASP DependencyCheck') { 
             steps { 
-                sh 'apk add yarn' 
+                sh 'npm install -g yarn'
                 dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASP Dependency Check' 
             } 
         }
