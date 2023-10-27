@@ -256,6 +256,7 @@ function Register() {
 
     try {
       const response = await axios.post(apiUrl, data);
+      alert("User Account Created Successfully!");
       console.log(data);
       console.log(response);
       console.log("User created successfully:", response.data);

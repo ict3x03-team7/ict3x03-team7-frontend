@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -29,6 +29,8 @@ const logoStyle = {
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -87,58 +89,66 @@ function Navbar() {
             <img src={logoImage} alt="Logo" style={logoStyle} />
           </Typography>
 
+          {/* {isLoggedIn && ( */}
           <Link to="/Recipes" style={{ color: "black" }}>
             <Button color="inherit">Search Recipe</Button>
           </Link>
+          {/* )} */}
 
+          {/* {isLoggedIn && ( */}
           <Link to="/Dashboard" style={{ color: "black" }}>
             <Button color="inherit">Admin Dashboard</Button>
           </Link>
+          {/* )} */}
 
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={open}
-            onClose={handleClose}
-            style={{ marginTop: "0px" }}
-          >
-            <MenuItem onClick={handleClose}>
-              <Button
-                onClick={gotoProfile}
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                My Profile
-              </Button>
-            </MenuItem>
+          {/* {isLoggedIn && ( */}
+          <div>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={open}
+              onClose={handleClose}
+              style={{ marginTop: "0px" }}
+            >
+              <MenuItem onClick={handleClose}>
+                <Button
+                  onClick={gotoProfile}
+                  style={{ color: "black", textDecoration: "none" }}
+                >
+                  My Profile
+                </Button>
+              </MenuItem>
 
-            <MenuItem onClick={handleClose}>
-              <Link
-                to="/Logout"
-                style={{ color: "black", textDecoration: "none" }}
-                onClick={handleLogout}
-              >
-                Logout
-              </Link>
-            </MenuItem>
-          </Menu>
+              <MenuItem onClick={handleClose}>
+                <Link
+                  to="/Logout"
+                  style={{ color: "black", textDecoration: "none" }}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Link>
+              </MenuItem>
+            </Menu>
+          </div>
+          {/* )} */}
         </Toolbar>
       </AppBar>
     </div>

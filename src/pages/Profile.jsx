@@ -13,6 +13,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Collapse from "@mui/material/Collapse";
 import Alert from "@mui/material/Alert";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Profile() {
@@ -162,6 +163,86 @@ function Profile() {
     }
   };
 
+  let navigate = useNavigate();
+  const gotoLogin = () => {
+    navigate("/");
+  };
+
+  // Function to delete a user
+  const deleteUser = async (userID) => {
+    try {
+      console.log("is there uid =>", userID);
+      const response = await axios.delete(
+        `http://localhost:8085/api/v1/user/${userID}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const result = response.data.result;
+        if (result.isSuccess) {
+          alert("Your account have been deleted successfully!");
+          console.log("User deleted successfully.");
+          gotoLogin();
+        } else {
+          console.error("Failed to delete the user.");
+        }
+      } else {
+        console.error("Failed to delete the user. Server returned an error.");
+      }
+    } catch (error) {
+      console.error("Error while deleting the user:", error);
+    }
+  };
+
+  // Event handler for the button click
+  const handleDeleteUser = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account?"
+    );
+    if (confirmed) {
+      deleteUser(userID);
+    }
+  };
+
+  // Function to delete a admin
+  const deleteAdmin = async (userID) => {
+    try {
+      console.log("is there uid =>", userID);
+      const response = await axios.delete(
+        `http://localhost:8085/api/v1/user/admin/${userID}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const result = response.data.result;
+        if (result.isSuccess) {
+          alert("Your account have been deleted successfully!");
+          console.log("Admin Account deleted successfully.");
+          gotoLogin();
+        } else {
+          console.error("Failed to delete the user.");
+        }
+      } else {
+        console.error("Failed to delete the user. Server returned an error.");
+      }
+    } catch (error) {
+      console.error("Error while deleting the user:", error);
+    }
+  };
+
+  const handleDeleteAdmin = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account?"
+    );
+    if (confirmed) {
+      deleteAdmin(userID);
+    }
+  };
+
   return (
     <div>
       {user ? (
@@ -199,13 +280,15 @@ function Profile() {
                       >
                         <b>Name:</b> {user.firstName} {user.lastName}
                       </Typography>
-                      <Typography
-                        gutterBottom
-                        variant="subtitle1"
-                        component="div"
-                      >
-                        <b>Admin Number:</b> {user.studentID}
-                      </Typography>
+                      {user.role === "Student" && (
+                        <Typography
+                          gutterBottom
+                          variant="subtitle1"
+                          component="div"
+                        >
+                          <b>Admin Number:</b> {user.studentID}
+                        </Typography>
+                      )}
                       <Typography
                         gutterBottom
                         variant="subtitle1"
@@ -213,33 +296,62 @@ function Profile() {
                       >
                         <b>Gender:</b> {user.gender}
                       </Typography>
-                      <Typography
-                        gutterBottom
-                        variant="subtitle1"
-                        component="div"
-                      >
-                        <b>Course:</b> Food Technology
-                      </Typography>
+                      {user.role === "Student" && (
+                        <Typography
+                          gutterBottom
+                          variant="subtitle1"
+                          component="div"
+                        >
+                          <b>Course:</b> Food Technology
+                        </Typography>
+                      )}
 
-                      {/* add a button */}
-                      <Button
+                      {/* add a button for delete */}
+                      {/* <Button
                         variant="contained"
                         color="error"
                         style={{ marginTop: "30px" }}
+                        onClick={handleDeleteUser}
                       >
                         Delete My Account
-                      </Button>
+                      </Button> */}
+                      {user.role === "Student" ? (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          style={{ marginTop: "30px" }}
+                          onClick={handleDeleteUser}
+                        >
+                          Delete My Account
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          style={{ marginTop: "30px" }}
+                          onClick={handleDeleteAdmin}
+                        >
+                          Delete My Account
+                        </Button>
+                      )}
                     </div>
                     <div style={{ flex: 1, textAlign: "center" }}>
                       <Typography style={{ marginTop: "15px" }}>
                         <b>Scan Me: 2FA</b>
                       </Typography>
                       {user.mfa_qr ? (
-                        <img
-                          src={user.mfa_qr}
-                          style={{ width: "100%" }}
-                          alt="2FA QR Code"
-                        />
+                        <div>
+                          <p>
+                            Scan the QR Code and Go to Google PLayStore or Apple
+                            Store to download Authenticator App to get your
+                            unique OTP.
+                          </p>
+                          <img
+                            src={user.mfa_qr}
+                            style={{ width: "100%" }}
+                            alt="2FA QR Code"
+                          />
+                        </div>
                       ) : (
                         <Button
                           variant="contained"

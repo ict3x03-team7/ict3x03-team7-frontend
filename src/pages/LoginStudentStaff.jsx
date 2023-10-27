@@ -117,7 +117,7 @@ function LoginStudentStaff(props) {
         }
       } catch (error) {
         console.error("API Error:", error);
-        setPasswordError("An error occurred during login");
+        setPasswordError("Incorrect email or password");
       }
     }
   };
