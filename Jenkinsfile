@@ -13,15 +13,10 @@ pipeline {
                 dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASP Dependency Check' 
             } 
         }
-
-
-        post { 
-            success { 
-                dependencyCheckPublisher pattern: 'dependency-check-report.xml' 
-            } 
-        }
-
-        
-        
+    }
+    post { 
+        success { 
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml' 
+        } 
     }
 }
