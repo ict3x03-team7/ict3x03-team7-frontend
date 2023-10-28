@@ -130,13 +130,10 @@ function Profile() {
     }
   };
 
+  // Call the function with the userID from location.state
   useEffect(() => {
-    // Call the function with the userID from location.state
     fetchUserByID(userID);
   }, [userID]);
-
-  // Call the function with the userID from location.state
-  // console.log(fetchUserByID(userID));
 
   const enable2FA = async () => {
     try {
@@ -206,43 +203,6 @@ function Profile() {
     }
   };
 
-  // Function to delete a admin
-  const deleteAdmin = async (userID) => {
-    try {
-      console.log("is there uid =>", userID);
-      const response = await axios.delete(
-        `http://localhost:8085/api/v1/user/admin/${userID}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.status === 200) {
-        const result = response.data.result;
-        if (result.isSuccess) {
-          alert("Your account have been deleted successfully!");
-          console.log("Admin Account deleted successfully.");
-          gotoLogin();
-        } else {
-          console.error("Failed to delete the user.");
-        }
-      } else {
-        console.error("Failed to delete the user. Server returned an error.");
-      }
-    } catch (error) {
-      console.error("Error while deleting the user:", error);
-    }
-  };
-
-  const handleDeleteAdmin = () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your account?"
-    );
-    if (confirmed) {
-      deleteAdmin(userID);
-    }
-  };
-
   return (
     <div>
       {user ? (
@@ -307,29 +267,13 @@ function Profile() {
                       )}
 
                       {/* add a button for delete */}
-                      {/* <Button
-                        variant="contained"
-                        color="error"
-                        style={{ marginTop: "30px" }}
-                        onClick={handleDeleteUser}
-                      >
-                        Delete My Account
-                      </Button> */}
-                      {user.role === "Student" ? (
+
+                      {user.role === "Student" && (
                         <Button
                           variant="contained"
                           color="error"
                           style={{ marginTop: "30px" }}
                           onClick={handleDeleteUser}
-                        >
-                          Delete My Account
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          color="error"
-                          style={{ marginTop: "30px" }}
-                          onClick={handleDeleteAdmin}
                         >
                           Delete My Account
                         </Button>

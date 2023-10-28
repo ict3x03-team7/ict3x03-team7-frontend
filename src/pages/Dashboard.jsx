@@ -7,9 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import GroupIcon from "@mui/icons-material/Group";
 import EmailIcon from "@mui/icons-material/Email";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import LockIcon from "@mui/icons-material/Lock";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -21,11 +19,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
+import axios from "axios";
 
 function Dashboard() {
   const columnStyle = {
     float: "left",
-    width: "30%",
+    width: "48%",
     padding: "15px",
     marginBottom: "10px",
     backgroundColor: "#e1f5fe",
@@ -41,133 +40,26 @@ function Dashboard() {
     marginTop: "10px",
   };
 
-  const randomNumber = () => {
-    return Math.floor(Math.random() * 100); // Generate a random number
-  };
-
-  const [role, setRole] = React.useState(""); // State for Roles dropdown
-  const [status, setStatus] = React.useState(""); // State for Account Status dropdown
-  const [filterError, setFilterError] = useState("");
-
-  const handleRoleChange = (event) => {
-    setFilterError("");
-    setRole(event.target.value);
-  };
-
-  const handleStatusChange = (event) => {
-    setFilterError("");
-    setStatus(event.target.value);
-  };
-
-  const handleSearch = () => {
-    // Check if either role or status is not "None"
-    if (role === "" && status === "") {
-      // Perform the search action
-      setFilterError(
-        "Please select at least one filter (Roles or Account Status)"
-      );
-    } else {
-      // Show an error message or handle the case where both are "None"
-      setFilterError("");
-    }
-  };
-
   const handleReset = () => {
-    // Reset both role and status to "None"
-    setRole("");
-    setStatus("");
-    setFilterError("");
+    // Reset the account status dropdown
+    setUserAccounttStatus("");
+
+    // Reset the table data
+    setUsers(originalUsers);
   };
-
-  // Sample data
-  const sampleData = [
-    {
-      id: 1,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 2,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 3,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 4,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 5,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 6,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-    {
-      id: 7,
-      fullName: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      studentId: "S12345",
-      gender: "Male",
-      role: "Student",
-      status: "Locked",
-    },
-
-    // Add more data here
-  ];
 
   // Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
+  // scroll to top button
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   useEffect(() => {
@@ -193,32 +85,163 @@ function Dashboard() {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Add smooth scrolling behavior
+      behavior: "smooth",
     });
   };
 
-  // edit icon
+  // Edit icon
   const [editableRow, setEditableRow] = useState(null);
   const [updatedStatus, setUpdatedStatus] = useState("");
 
   // Function to handle the "Edit" button click
   const handleEditClick = (id) => {
     setEditableRow(id);
-    // Initialize the updatedStatus with the current status value
-    const row = sampleData.find((row) => row.id === id);
-    setUpdatedStatus(row.status);
+    // Initialize the updatedStatus with the current locked value
+    const user = users.find((user) => user.userID === id);
+    setUpdatedStatus(user.locked ? "Locked" : "Not Locked");
   };
 
   // Function to handle the "Update" button click
   const handleUpdate = (id) => {
     // Handle the update logic here with the selected status (updatedStatus)
-    // After updating, you can set editableRow back to null to exit the edit mode
+    const updatedUser = users.find((user) => user.userID === id);
+
+    if (updatedStatus === "Locked" && updatedUser.locked === false) {
+      alert("User Account is Not Locked. You cannot locked a user account!");
+      return;
+    }
+
+    if (updatedStatus === "Not Locked" && updatedUser.locked === false) {
+      alert("User Account is already Unlocked.");
+      return;
+    }
+
+    // Define the payload for the update request
+    const updatePayload = {
+      locked: updatedStatus === "Locked",
+    };
+
+    // Make the PUT request to update the user status
+    axios
+      .put(`http://localhost:8085/api/v1/user/${id}/unlock`, updatePayload, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.result.isUnlocked) {
+          // Update the user's locked status in the frontend
+          const updatedUsers = users.map((user) => {
+            if (user.userID === id) {
+              return { ...user, locked: false };
+            }
+            return user;
+          });
+          setUsers(updatedUsers);
+        } else {
+          console.log("Unlock request failed:", response);
+        }
+      })
+      .catch((error) => {
+        console.error("Error unlocking user:", error);
+      });
+
+    // exit the edit mode
     setEditableRow(null);
   };
 
   // Function to handle the "Cancel" button click
   const handleCancelEdit = () => {
     setEditableRow(null);
+  };
+
+  // get all user data
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8085/api/v1/user/all",
+          {
+            withCredentials: true, // Include withCredentials option
+          }
+        );
+
+        console.log(response);
+
+        if (response.status === 200) {
+          setUsers(response.data.result);
+        } else {
+          console.log("Unexpected status code:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Update Table after Deleting a Record
+  useEffect(() => {
+    axios.get("http://localhost:8085/api/v1/users").then((response) => {
+      if (response.status === 200) {
+        setUsers(response.data.users);
+        setUsersData(response.data.users);
+      } else {
+        console.error("Failed to fetch user data");
+      }
+    });
+  }, []);
+
+  // delete selected user account (for admin to delete only)
+  const handleDeleteUser = (userID) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user's account?"
+    );
+    if (confirmed) {
+      deleteAccount(userID);
+    }
+  };
+
+  const deleteAccount = async (userID) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8085/api/v1/user/admin/${userID}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const result = response.data.result;
+        if (result.isSuccess) {
+          alert("User account has been deleted successfully.");
+          console.log("User account deleted successfully.");
+
+          // Update users and usersData after deletion
+          const updatedUsers = users.filter((user) => user.userID !== userID);
+          setUsers(updatedUsers);
+          setUsersData(updatedUsers);
+        } else {
+          console.error("Failed to delete the user.");
+        }
+      } else {
+        console.error("Failed to delete the user. Server returned an error.");
+      }
+    } catch (error) {
+      console.error("Error while deleting the user:", error);
+    }
+  };
+
+  // Calculate the total number of users
+  const totalUsers = users.length;
+
+  // Calculate the total number of locked accounts
+  const totalLockedAccounts = users.filter((user) => user.locked).length;
+
+  // filter table by account locked status
+  const [useraccountstatus, setUserAccounttStatus] = useState("");
+  const handleUserAccountStatusChange = (event) => {
+    setUserAccounttStatus(event.target.value);
   };
 
   return (
@@ -237,7 +260,7 @@ function Dashboard() {
           <Paper style={{ padding: "10px" }}>
             <EmailIcon style={iconStyle} />
             <Typography variant="h3" style={numberStyle}>
-              {randomNumber()}
+              {totalUsers}
             </Typography>
             <div>
               <Typography variant="h5">Total Users</Typography>
@@ -247,21 +270,9 @@ function Dashboard() {
 
         <div className="column" style={columnStyle}>
           <Paper style={{ padding: "10px" }}>
-            <VisibilityIcon style={iconStyle} />
-            <Typography variant="h3" style={numberStyle}>
-              {randomNumber()}
-            </Typography>
-            <div>
-              <Typography variant="h5">New Users</Typography>
-            </div>
-          </Paper>
-        </div>
-
-        <div className="column" style={columnStyle}>
-          <Paper style={{ padding: "10px" }}>
             <LockIcon style={iconStyle} />
             <Typography variant="h3" style={numberStyle}>
-              {randomNumber()}
+              {totalLockedAccounts}
             </Typography>
             <div>
               <Typography variant="h5">Account Locked</Typography>
@@ -291,25 +302,7 @@ function Dashboard() {
         <Typography variant="h6" style={{ marginRight: "20px" }}>
           Filter:
         </Typography>
-        <FormControl
-          sx={{ m: 1, minWidth: 200, marginRight: "20px" }}
-          size="small"
-        >
-          <InputLabel id="roles-label">Roles</InputLabel>
-          <Select
-            labelId="roles-label"
-            id="roles-select"
-            value={role}
-            label="Roles"
-            onChange={handleRoleChange}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="student">Student</MenuItem>
-            <MenuItem value="admin">Admin</MenuItem>
-          </Select>
-        </FormControl>
+
         <FormControl
           sx={{ m: 1, minWidth: 200, marginRight: "20px" }}
           size="small"
@@ -318,9 +311,9 @@ function Dashboard() {
           <Select
             labelId="status-label"
             id="status-select"
-            value={status}
+            value={useraccountstatus}
             label="Account Status"
-            onChange={handleStatusChange}
+            onChange={handleUserAccountStatusChange}
           >
             <MenuItem value="">
               <em>None</em>
@@ -329,27 +322,20 @@ function Dashboard() {
             <MenuItem value="unlocked">Unlocked</MenuItem>
           </Select>
         </FormControl>
+
         <Button
           variant="contained"
           size="medium"
           style={{ marginRight: "15px" }}
-          onClick={handleSearch}
+          onClick={handleReset}
         >
-          Search
-        </Button>
-        <Button variant="outlined" size="medium" onClick={handleReset}>
           Reset
         </Button>
       </div>
-      {filterError && (
-        <Alert severity="error" style={{ marginTop: "5px" }}>
-          {filterError}
-        </Alert>
-      )}
+
       <br />
       <br />
 
-      {/* add table here */}
       <div style={{ marginTop: "20px" }}>
         <Paper>
           <Table>
@@ -362,42 +348,58 @@ function Dashboard() {
                 <TableCell style={{ color: "white" }}>Student ID</TableCell>
                 <TableCell style={{ color: "white" }}>Gender</TableCell>
                 <TableCell style={{ color: "white" }}>Role</TableCell>
+                <TableCell style={{ color: "white" }}>Last Login</TableCell>
                 <TableCell style={{ color: "white" }}>Status</TableCell>
                 <TableCell style={{ color: "white" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {sampleData
+              {users
+                .filter((user) => {
+                  if (useraccountstatus === "locked") {
+                    return user.locked;
+                  } else if (useraccountstatus === "unlocked") {
+                    return !user.locked;
+                  }
+                  // Show all users when no status is selected
+                  return true;
+                })
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.fullName}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phoneNumber}</TableCell>
-                    <TableCell>{row.studentId}</TableCell>
-                    <TableCell>{row.gender}</TableCell>
-                    <TableCell>{row.role}</TableCell>
+                .map((user, index) => (
+                  <TableRow key={user.userID}>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>
-                      {editableRow === row.id ? (
+                      {user.firstName + " " + user.lastName}
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.mobileNumber}</TableCell>
+                    <TableCell>{user.studentID || "N/A"}</TableCell>
+                    <TableCell>{user.gender}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{user.lastLogin || "N/A"}</TableCell>
+
+                    <TableCell>
+                      {editableRow === user.userID ? (
                         <Select
                           size="small"
                           value={updatedStatus}
                           onChange={(e) => setUpdatedStatus(e.target.value)}
                         >
                           <MenuItem value="Locked">Locked</MenuItem>
-                          <MenuItem value="Unlocked">Unlocked</MenuItem>
+                          <MenuItem value="Not Locked">Not Locked</MenuItem>
                         </Select>
+                      ) : user.locked ? (
+                        "Locked"
                       ) : (
-                        row.status
+                        "Not Locked"
                       )}
                     </TableCell>
                     <TableCell>
-                      {editableRow === row.id ? (
+                      {editableRow === user.userID ? (
                         <div>
                           <Button
                             color="primary"
-                            onClick={() => handleUpdate(row.id)}
+                            onClick={() => handleUpdate(user.userID)}
                           >
                             Update
                           </Button>
@@ -414,12 +416,16 @@ function Dashboard() {
                             <IconButton
                               color="primary"
                               aria-label="edit"
-                              onClick={() => handleEditClick(row.id)}
+                              onClick={() => handleEditClick(user.userID)}
                             >
                               <EditIcon />
                             </IconButton>
                           ) : null}
-                          <IconButton color="primary" aria-label="delete">
+                          <IconButton
+                            color="primary"
+                            aria-label="delete"
+                            onClick={() => handleDeleteUser(user.userID)}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </div>
@@ -429,10 +435,11 @@ function Dashboard() {
                 ))}
             </TableBody>
           </Table>
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={sampleData.length}
+            count={users.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -458,7 +465,7 @@ function Dashboard() {
             zIndex: 1000,
           }}
         >
-          <ArrowUpwardIcon /> {/* Replace text with the ArrowUpward icon */}
+          <ArrowUpwardIcon />
         </Button>
       )}
     </div>
