@@ -198,7 +198,10 @@ function Recipes() {
         <Grid
           container
           spacing={2}
-          style={{ display: "flex", flexWrap: "wrap" }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
         >
           {recipes.map((recipe, index) => (
             <Grid
@@ -206,15 +209,15 @@ function Recipes() {
               xs={12}
               sm={4}
               key={index}
-              style={{ ...gridItemStyle, display: "flex" }}
+              style={{
+                ...gridItemStyle,
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
               <Paper
                 elevation={3}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                }}
+                style={{ display: "flex", flexDirection: "column", flex: 1 }}
               >
                 <img
                   src={recipe.recipeImage}
@@ -228,6 +231,7 @@ function Recipes() {
                     display: "flex",
                     flexDirection: "column",
                     padding: "20px",
+                    flex: 1,
                   }}
                 >
                   <Typography gutterBottom variant="subtitle1" component="div">
