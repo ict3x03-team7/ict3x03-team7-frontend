@@ -185,7 +185,7 @@ function Recipes() {
           </Button>
         </div>
         {searchTextError && (
-          <Alert severity="error" style={{ marginTop: "5px" }}>
+          <Alert data-testid="searcherror" severity="error" style={{ marginTop: "5px" }}>
             {searchTextError}
           </Alert>
         )}
@@ -363,6 +363,7 @@ function Recipes() {
       {/* Scroll to top button */}
       {showScrollButton && (
         <Button
+          data-testid= "scroll-to-top-button"
           variant="contained"
           onClick={scrollToTop}
           style={{
