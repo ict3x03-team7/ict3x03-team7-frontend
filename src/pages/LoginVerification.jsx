@@ -82,7 +82,42 @@ function LoginVerification(props) {
 
       if (response.status === 200) {
         // Successful verification
-        navigate("/Recipes");
+
+        // check session
+        const response = await axios.get(
+          "http://localhost:8085/api/v1/auth/session",
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          const data = response.data;
+
+          if (data.Error) {
+            // User is not logged in, handle as needed
+            console.log("User is not logged in");
+          } else {
+            // User is logged in, get the user ID and role
+            const { userID, role } = data.result;
+            console.log("yyy User ID:", userID);
+            console.log("yyy User Role:", role);
+
+            if (role === "Student") {
+              // go to recipe directly
+              navigate("/Recipes");
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
+            } else if (role === "Admin") {
+              // go to dashboard directly
+              navigate("/Dashboard");
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
+            }
+          }
+        }
       } else {
         // Handle unsuccessful verification
         setOtpError("Invalid OTP code");
@@ -109,9 +144,7 @@ function LoginVerification(props) {
         <br />
 
         <Alert severity="success">
-          We've sent a verification code to your email - someoneemail@gmail.com
-          {" checkkkk:"}
-          {location.state.email}
+          We've sent a verification code to your Google Authenticator app!
         </Alert>
 
         <br />

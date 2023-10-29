@@ -41,11 +41,15 @@ function Dashboard() {
   };
 
   const handleReset = () => {
-    // Reset the account status dropdown
-    setUserAccounttStatus("");
+    try {
+      // Reset the account status dropdown
+      setUserAccounttStatus("");
 
-    // Reset the table data
-    setUsers(originalUsers);
+      // Reset the table data
+      setUsers(originalUsers);
+    } catch (error) {
+      console.error("Error in handleReset:", error);
+    }
   };
 
   // Pagination

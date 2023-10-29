@@ -37,7 +37,7 @@ function Recipes() {
     setOpenModal(false);
   };
 
-  const [searchText, setSearchText] = useState("salmon, cheese, chili");
+  const [searchText, setSearchText] = useState("salmon, cheese");
   const [searchTextError, setSearchTextError] = useState("");
 
   let navigate = useNavigate();
@@ -85,7 +85,7 @@ function Recipes() {
   useEffect(() => {
     axios
       .get(
-        "http://localhost:8085/api/v1/recipe/search?ingredients=salmon&ingredients=cheese&ingredients=egg",
+        "http://localhost:8085/api/v1/recipe/search?ingredients=salmon&ingredients=cheese",
         {
           withCredentials: true,
         }
@@ -185,7 +185,11 @@ function Recipes() {
           </Button>
         </div>
         {searchTextError && (
-          <Alert data-testid="searcherror" severity="error" style={{ marginTop: "5px" }}>
+          <Alert
+            data-testid="searcherror"
+            severity="error"
+            style={{ marginTop: "5px" }}
+          >
             {searchTextError}
           </Alert>
         )}
@@ -363,7 +367,7 @@ function Recipes() {
       {/* Scroll to top button */}
       {showScrollButton && (
         <Button
-          data-testid= "scroll-to-top-button"
+          data-testid="scroll-to-top-button"
           variant="contained"
           onClick={scrollToTop}
           style={{

@@ -149,6 +149,11 @@ function Profile() {
         const result = response.data.result;
         if (result.isEnabled) {
           alert("2FA has been enabled successfully.");
+
+          // Wait for 2 seconds and then refresh the page
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         } else {
           console.error("Failed to enable 2FA.");
         }

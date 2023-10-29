@@ -15,22 +15,46 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const navbarStyle = {
-  backgroundColor: "white", // White background color
-  color: "black", // Black text color
-  position: "fixed", // Sticky position
-  top: "0", // Stick to the top of the viewport
-  zIndex: "1000", // Set the z-index to ensure it's above other elements
+  backgroundColor: "white",
+  color: "black",
+  position: "fixed",
+  top: "0",
+  zIndex: "1000",
 };
 
 const logoStyle = {
-  maxHeight: "70px", // Adjust the logo size
+  maxHeight: "70px",
 };
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  let navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Define a state variable to store the session data
+  const [sessionData, setSessionData] = useState(null);
+
+  useEffect(() => {
+    // Fetch user session data when the component mounts
+    const fetchUserSession = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8085/api/v1/auth/session",
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          setSessionData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+      }
+    };
+
+    fetchUserSession();
+  }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -40,26 +64,17 @@ function Navbar() {
     setAnchorEl(null);
   };
 
-  let navigate = useNavigate();
-  const gotoProfile = async () => {
-    // navigate("/Profile");
+  const gotoProfile = () => {
+    if (sessionData && sessionData.result) {
+      const { userID } = sessionData.result;
+      navigate("/Profile", { state: { userID } });
+    }
+  };
 
-    try {
-      const response = await axios.get(
-        "http://localhost:8085/api/v1/auth/userID",
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.status === 200) {
-        const userID = response.data.result;
-        console.log("User ID:", userID);
-
-        navigate("/Profile", { state: { userID } });
-      }
-    } catch (error) {
-      console.error("Error fetching user ID:", error);
+  const gotoRecipe = () => {
+    if (sessionData && sessionData.result) {
+      const { userID } = sessionData.result;
+      navigate("/Recipes", { state: { userID } });
     }
   };
 
@@ -70,8 +85,11 @@ function Navbar() {
       })
       .then((response) => {
         if (response.status === 200) {
-          // Successful logout
           console.log("Logout successful:", response.data);
+          navigate("/Logout");
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         } else {
           console.log("Unexpected status code:", response.status);
         }
@@ -89,66 +107,81 @@ function Navbar() {
             <img src={logoImage} alt="Logo" style={logoStyle} />
           </Typography>
 
-          {/* {isLoggedIn && ( */}
-          <Link to="/Recipes" style={{ color: "black" }}>
-            <Button color="inherit">Search Recipe</Button>
-          </Link>
-          {/* )} */}
-
-          {/* {isLoggedIn && ( */}
-          <Link to="/Dashboard" style={{ color: "black" }}>
-            <Button color="inherit">Admin Dashboard</Button>
-          </Link>
-          {/* )} */}
-
-          {/* {isLoggedIn && ( */}
-          <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={open}
-              onClose={handleClose}
-              style={{ marginTop: "0px" }}
-            >
-              <MenuItem onClick={handleClose}>
-                <Button
-                  onClick={gotoProfile}
-                  style={{ color: "black", textDecoration: "none" }}
-                >
-                  My Profile
-                </Button>
-              </MenuItem>
-
-              <MenuItem onClick={handleClose}>
-                <Link
-                  to="/Logout"
-                  style={{ color: "black", textDecoration: "none" }}
-                  onClick={handleLogout}
-                >
-                  Logout
+          {sessionData && sessionData.result && (
+            <>
+              {sessionData.result.role === "Student" && (
+                <Link to="/Recipes" style={{ color: "black" }}>
+                  <Button color="inherit" onClick={gotoRecipe}>
+                    Search Recipe
+                  </Button>
                 </Link>
-              </MenuItem>
-            </Menu>
-          </div>
-          {/* )} */}
+              )}
+              {sessionData.result.role === "Admin" && (
+                <Link to="/Dashboard" style={{ color: "black" }}>
+                  <Button color="inherit">Admin Dashboard</Button>
+                </Link>
+              )}
+              <div>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={open}
+                  onClose={handleClose}
+                  style={{ marginTop: "0px" }}
+                >
+                  <MenuItem onClick={handleClose}>
+                    <Button
+                      onClick={gotoProfile}
+                      style={{
+                        color: "black",
+                        textDecoration: "none",
+                        textTransform: "none",
+                      }}
+                    >
+                      My Profile
+                    </Button>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    {/* <Link
+                      to="/Logout"
+                      style={{ color: "black", textDecoration: "none" }}
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Link> */}
+                    <Button
+                      onClick={handleLogout}
+                      style={{
+                        color: "black",
+                        textDecoration: "none",
+                        textTransform: "none",
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </MenuItem>
+                </Menu>
+              </div>
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </div>
