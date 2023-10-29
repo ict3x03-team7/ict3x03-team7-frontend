@@ -4,8 +4,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                nodejs('NodeJS'){
-                    sh 'yarn install'
+               script {
+                    def nodejsInstallation = tool name: 'NodeJS', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+                    env.PATH = "${nodejsInstallation}/bin:${env.PATH}"
+                    sh 'npm install'
                 }
             }
         }
