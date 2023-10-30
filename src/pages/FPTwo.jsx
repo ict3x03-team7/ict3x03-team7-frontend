@@ -37,14 +37,12 @@ function FPTwo(props) {
   };
 
   const location = useLocation();
-  //   console.log("FP2==>", location.state.email);
 
   const gotoFPThree = async () => {
     if (verifyOtp()) {
       try {
         const email = location.state.email; // Get the email from the location state
 
-        console.log("FP2 =>", email, otp);
         // Make an API call to verify the OTP
         const response = await axios.post(
           "http://localhost:8085/api/v1/auth/verify",
@@ -53,18 +51,16 @@ function FPTwo(props) {
             totp: otp,
           }
         );
-        console.log(response);
 
         if (response.status === 200 && response.data.result.isVerified) {
           // OTP is verified, navigate to FPThree
           navigate("/FPThree", { state: { email } });
         } else {
           // Handle the case where OTP is not verified or other errors
-          console.log("OTP verification failed.");
         }
       } catch (error) {
         // Handle network errors or API errors
-        console.error("API Error:", error);
+        console.error("API Error");
       }
     }
   };

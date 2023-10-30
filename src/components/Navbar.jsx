@@ -78,14 +78,6 @@ function Navbar() {
     }
   };
 
-  const gotoredirect404 = () => {
-    navigate("/Redirect404");
-  };
-
-  const gotoredirect500 = () => {
-    navigate("/Redirect500");
-  };
-
   const handleLogout = () => {
     axios
       .post("http://localhost:8085/api/v1/auth/logout", null, {
@@ -93,17 +85,15 @@ function Navbar() {
       })
       .then((response) => {
         if (response.status === 200) {
-          console.log("Logout successful:", response.data);
           navigate("/Logout");
           setTimeout(() => {
             window.location.reload();
           }, 100);
         } else {
-          console.log("Unexpected status code:", response.status);
         }
       })
       .catch((error) => {
-        console.error("Logout error:", error);
+        console.error("Logout error");
       });
   };
 
@@ -114,14 +104,6 @@ function Navbar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <img src={logoImage} alt="Logo" style={logoStyle} />
           </Typography>
-
-          {/* <Button color="inherit" onClick={gotoredirect404}>
-            404{" "}
-          </Button>
-
-          <Button color="inherit" onClick={gotoredirect500}>
-            500{" "}
-          </Button> */}
 
           {sessionData && sessionData.result && (
             <>
@@ -176,13 +158,6 @@ function Navbar() {
                     </Button>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
-                    {/* <Link
-                      to="/Logout"
-                      style={{ color: "black", textDecoration: "none" }}
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Link> */}
                     <Button
                       onClick={handleLogout}
                       style={{

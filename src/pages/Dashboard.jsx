@@ -18,7 +18,6 @@ import TablePagination from "@mui/material/TablePagination";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-import Alert from "@mui/material/Alert";
 import axios from "axios";
 
 function Dashboard() {
@@ -48,7 +47,7 @@ function Dashboard() {
       // Reset the table data
       setUsers(originalUsers);
     } catch (error) {
-      console.error("Error in handleReset:", error);
+      console.error("Error in handleReset");
     }
   };
 
@@ -141,11 +140,10 @@ function Dashboard() {
           });
           setUsers(updatedUsers);
         } else {
-          console.log("Unlock request failed:", response);
         }
       })
       .catch((error) => {
-        console.error("Error unlocking user:", error);
+        console.error("Error unlocking user");
       });
 
     // exit the edit mode
@@ -169,15 +167,12 @@ function Dashboard() {
           }
         );
 
-        console.log(response);
-
         if (response.status === 200) {
           setUsers(response.data.result);
         } else {
-          console.log("Unexpected status code:", response.status);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user data");
       }
     };
 
@@ -219,7 +214,6 @@ function Dashboard() {
         const result = response.data.result;
         if (result.isSuccess) {
           alert("User account has been deleted successfully.");
-          console.log("User account deleted successfully.");
 
           // Update users and usersData after deletion
           const updatedUsers = users.filter((user) => user.userID !== userID);
@@ -232,7 +226,7 @@ function Dashboard() {
         console.error("Failed to delete the user. Server returned an error.");
       }
     } catch (error) {
-      console.error("Error while deleting the user:", error);
+      console.error("Error while deleting the user");
     }
   };
 

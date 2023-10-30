@@ -59,7 +59,6 @@ function FPThree() {
       try {
         const getparseemail = location.state.email; // Get the email from the location state
 
-        console.log(getparseemail, password);
         // Make an API call to reset the password
         const response = await axios.post(
           "http://localhost:8085/api/v1/auth/resetpassword",
@@ -68,36 +67,31 @@ function FPThree() {
             newPassword: password, // Use the new password entered by the user
           }
         );
-        console.log(response);
 
         if (response.status === 200 && response.data.result.isSuccess) {
+          alert("Password Changed Successfully!");
+
           // Password reset was successful; you can navigate to a success page or login page
           navigate("/");
         } else {
           // Handle the case where the password reset was not successful or other errors
-          console.log("Password reset failed.");
         }
       } catch (error) {
         // Handle network errors or API errors
-        console.error("API Error:", error);
+        console.error("API Error");
       }
     }
   };
 
   const location = useLocation();
-  console.log("FP3 =>", location.state.email);
 
   const verifyPassword = () => {
     let valid = true;
 
     // Password validation
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password must meet the specified criteria.");
-      valid = false;
-    } else if (password.length < 12) {
-      setPasswordError("Password must be at least 12 characters");
+
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
       valid = false;
     } else {
       setPasswordError("");

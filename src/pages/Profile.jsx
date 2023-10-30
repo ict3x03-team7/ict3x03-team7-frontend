@@ -47,13 +47,11 @@ function Profile() {
 
   const location = useLocation();
   const userID = location.state.userID;
-  console.log("User ID in Profile component:", userID);
 
   const [user, setUser] = useState(null);
 
   const updatePassword = async (userID, newPassword) => {
     try {
-      console.log(userID, newPassword);
       const response = await axios.put(
         `http://localhost:8085/api/v1/user/${userID}/updatePassword`,
         {
@@ -63,11 +61,9 @@ function Profile() {
           withCredentials: true,
         }
       );
-      console.log(response);
 
       if (response.status === 200) {
         alert("Password updated successfully.");
-        console.log("Password updated successfully.");
         // once successful, clear textbox
         setPassword("");
         setConfirmedPassword("");
@@ -75,7 +71,7 @@ function Profile() {
         console.error("Failed to update password. Server returned an error.");
       }
     } catch (error) {
-      console.error("Error while updating password:", error);
+      console.error("Error while updating password");
     }
   };
 
@@ -85,14 +81,6 @@ function Profile() {
 
   const handleSave_password = () => {
     let valid = true;
-
-    // Password validation
-    // const passwordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-    // if (!passwordRegex.test(password)) {
-    //   setPasswordError("Password must meet the specified criteria.");
-    //   valid = false;
-    // } else
 
     if (password.length < 8) {
       setPasswordError("Password must be at least 8 characters");
@@ -128,7 +116,7 @@ function Profile() {
         setUser(userData);
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching user data");
     }
   };
 
@@ -163,7 +151,7 @@ function Profile() {
         console.error("Failed to enable 2FA. Server returned an error.");
       }
     } catch (error) {
-      console.error("Error while enabling 2FA:", error);
+      console.error("Error while enabling 2FA");
     }
   };
 
@@ -175,7 +163,6 @@ function Profile() {
   // Function to delete a user
   const deleteUser = async (userID) => {
     try {
-      console.log("is there uid =>", userID);
       const response = await axios.delete(
         `http://localhost:8085/api/v1/user/${userID}`,
         {
@@ -187,7 +174,6 @@ function Profile() {
         const result = response.data.result;
         if (result.isSuccess) {
           alert("Your account have been deleted successfully!");
-          console.log("User deleted successfully.");
           gotoLogin();
         } else {
           console.error("Failed to delete the user.");
@@ -196,7 +182,7 @@ function Profile() {
         console.error("Failed to delete the user. Server returned an error.");
       }
     } catch (error) {
-      console.error("Error while deleting the user:", error);
+      console.error("Error while deleting the user");
     }
   };
 

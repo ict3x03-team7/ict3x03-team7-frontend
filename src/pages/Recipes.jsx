@@ -113,23 +113,6 @@ function Recipes() {
     });
   };
 
-  // const [recipes, setRecipes] = useState([]);
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       "http://localhost:8085/api/v1/recipe/search?ingredients=salmon&ingredients=cheese",
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     )
-  //     .then((response) => {
-  //       setRecipes(response.data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // }, []);
-
   const [recipes, setRecipes] = useState([]);
   useEffect(() => {
     // Randomly select two different ingredients
@@ -140,8 +123,6 @@ function Recipes() {
     // Format the URL with the random ingredients
     const apiUrl = `http://localhost:8085/api/v1/recipe/search?ingredients=${randomIngredients[0]}&ingredients=${randomIngredients[1]}`;
 
-    console.log("Random =>", apiUrl);
-
     axios
       .get(apiUrl, {
         withCredentials: true,
@@ -150,7 +131,7 @@ function Recipes() {
         setRecipes(response.data.result);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data");
       });
   }, []);
 
@@ -205,7 +186,6 @@ function Recipes() {
 
           // parse search result
           const getSearchText = searchText;
-          console.log(getSearchText);
 
           navigate("/SearchRecipeResults", {
             state: { searchURL, getSearchText },
@@ -214,7 +194,7 @@ function Recipes() {
           setSearchText("");
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          console.error("Error fetching data");
         });
     }
   };

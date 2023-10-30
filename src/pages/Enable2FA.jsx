@@ -23,16 +23,12 @@ function Enable2FA(props) {
   };
 
   const location = useLocation();
-  console.log(location);
-  console.log(location.state.get_MFA);
   const get_MFA = location.state.get_MFA;
 
   const [qrScanned, setQrScanned] = useState(false);
 
   let navigate = useNavigate();
-  //   const gotoLogin = () => {
-  //     navigate("/");
-  //   };
+
   const gotoLogin = () => {
     if (qrScanned) {
       const userConfirmed = window.confirm(
@@ -92,10 +88,20 @@ function Enable2FA(props) {
             This will be use for future logins!
           </p>
 
-          <img src={get_MFA} style={{ width: "100%" }} alt="2FA QR Code" />
+          <img
+            src={get_MFA}
+            style={{ width: "50%", display: "block", margin: "0 auto" }}
+            alt="2FA QR Code"
+          />
 
           {/* checkbox to check if user scanned the qr */}
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <input
               type="checkbox"
               checked={qrScanned}

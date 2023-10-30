@@ -26,14 +26,6 @@ function LoginVerification(props) {
     width: "50%",
   };
 
-  const [isHoveredLink, setIsHoveredLink] = useState(false);
-  const handleLinkMouseEnter = () => {
-    setIsHoveredLink(true);
-  };
-  const handleLinkMouseLeave = () => {
-    setIsHoveredLink(false);
-  };
-
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
   const [isVerified, setIsVerified] = useState(false);
@@ -52,8 +44,6 @@ function LoginVerification(props) {
 
   // Function to handle OTP verification
   const location = useLocation();
-  // console.log(location);
-  // console.log(location.state.email);
 
   const verifyOtp = async () => {
     if (!otp) {
@@ -67,7 +57,6 @@ function LoginVerification(props) {
     try {
       // Send a request to the backend to verify OTP
       const getparsedemail = location.state.email;
-      console.log(getparsedemail, otp);
       const response = await axios.post(
         "http://localhost:8085/api/v1/auth/login/verify",
         {
@@ -78,7 +67,6 @@ function LoginVerification(props) {
           withCredentials: true,
         }
       );
-      console.log(response);
 
       if (response.status === 200) {
         // Successful verification
@@ -96,12 +84,9 @@ function LoginVerification(props) {
 
           if (data.Error) {
             // User is not logged in, handle as needed
-            console.log("User is not logged in");
           } else {
             // User is logged in, get the user ID and role
             const { userID, role } = data.result;
-            console.log("yyy User ID:", userID);
-            console.log("yyy User Role:", role);
 
             if (role === "Student") {
               // go to recipe directly
@@ -123,7 +108,7 @@ function LoginVerification(props) {
         setOtpError("Invalid OTP code");
       }
     } catch (error) {
-      console.error("API Error:", error);
+      console.error("API Error");
       setOtpError("An error occurred during verification");
     }
   };
@@ -197,21 +182,6 @@ function LoginVerification(props) {
 
         <br />
         <br />
-
-        <p>
-          Didn't receive OTP?{" "}
-          <Link
-            style={{
-              color: isHoveredLink ? "maroon" : "blue",
-              textDecoration: isHoveredLink ? "underline" : "none",
-              marginRight: "10px",
-            }}
-            onMouseEnter={handleLinkMouseEnter}
-            onMouseLeave={handleLinkMouseLeave}
-          >
-            RESEND OTP
-          </Link>
-        </p>
       </Paper>
     </div>
   );

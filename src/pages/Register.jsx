@@ -7,7 +7,6 @@ import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Visibility from "@mui/icons-material/Visibility";
@@ -109,7 +108,6 @@ function Register() {
     if (file) {
       const fileRef = file || "";
       const fileType = fileRef.type || "";
-      console.log("This file upload is of type:", fileType);
 
       const reader = new FileReader();
       reader.readAsBinaryString(fileRef);
@@ -144,13 +142,8 @@ function Register() {
   let navigate = useNavigate();
   const chooseLoginAccountButton = () => {
     if (validateInputs()) {
-      console.log(userData);
-
       // Call the createUser function with the example data
       createUser(userData);
-
-      // go to login again
-      // navigate("/");
     }
   };
 
@@ -231,11 +224,6 @@ function Register() {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
 
-    //   if (!passwordRegex.test(password)) {
-    //   setPasswordError("Password must meet the specified criteria.");
-    //   valid = false;
-    // } else
-
     if (password.length < 8) {
       setPasswordError("Password must be at least 8 characters");
       valid = false;
@@ -258,25 +246,16 @@ function Register() {
     const apiUrl = "http://localhost:8085/api/v1/user";
 
     try {
-      console.log("qew");
       const response = await axios.post(apiUrl, data);
-      console.log(response);
 
-      console.log("register =>", response);
-      console.log(response.status);
-
-      console.log("MFA", response.data.result.mfa_qr);
       const get_MFA = response.data.result.mfa_qr;
 
       alert("User Account Created Successfully!");
-      console.log(data);
-      console.log(response);
-      console.log("User created successfully:", response.data);
 
       // once user create, show the QR Code
       navigate("/Enable2FA", { state: { get_MFA } });
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Error creating user");
       alert("Registration Failed! Please Try Again.");
 
       // clear all the fields

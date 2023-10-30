@@ -6,7 +6,6 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import food1 from "../assets/recipe/food1.jpg";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -26,7 +25,6 @@ function SearchRecipeResults() {
 
   // get recipe results
   const location = useLocation();
-  console.log("results from search =>", location.state.searchURL);
   const searchURL = location.state.searchURL;
 
   let getSearchText = location.state.getSearchText;
@@ -138,7 +136,7 @@ function SearchRecipeResults() {
           setSearchText("");
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          console.error("Error fetching data");
         });
     }
   };
@@ -154,7 +152,7 @@ function SearchRecipeResults() {
         setRecipes(response.data.result);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:");
       });
   }, []);
 

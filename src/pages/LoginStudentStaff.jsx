@@ -90,7 +90,6 @@ function LoginStudentStaff(props) {
 
     if (valid) {
       try {
-        console.log(email, password);
         const response = await axios.post(
           "http://localhost:8085/api/v1/auth/login",
           {
@@ -101,7 +100,6 @@ function LoginStudentStaff(props) {
             withCredentials: true,
           }
         );
-        console.log(response);
         if (response.status === 200) {
           if (
             response.data.result.isSuccess &&
@@ -123,12 +121,9 @@ function LoginStudentStaff(props) {
 
               if (data.Error) {
                 // User is not logged in
-                console.log("User is not logged in");
               } else {
                 // User is logged in, get the user ID and role
                 const { userID, role } = data.result;
-                console.log("yyy User ID:", userID);
-                console.log("yyy User Role:", role);
 
                 if (role === "Student") {
                   // go to recipe directly
@@ -150,7 +145,7 @@ function LoginStudentStaff(props) {
           setPasswordError("Incorrect email or password");
         }
       } catch (error) {
-        console.error("API Error:", error);
+        console.error("API Error");
         setPasswordError("An error occurred during login");
       }
     }
@@ -181,19 +176,16 @@ function LoginStudentStaff(props) {
 
         if (data.Error) {
           // User is not logged in, handle as needed
-          console.log("User is not logged in");
         } else {
           // User is logged in, get the user ID and role
           const { userID, role } = data.result;
-          console.log("User ID:", userID);
-          console.log("User Role:", role);
 
           // Now you can navigate to the Recipes page with user information
           navigate("/Recipes", { state: { userID, role } });
         }
       }
     } catch (error) {
-      console.error("Error fetching user session:", error);
+      console.error("Error fetching user session");
     }
   };
 
@@ -210,21 +202,16 @@ function LoginStudentStaff(props) {
         const data = response.data;
 
         if (data.Error) {
-          // User is not logged in, handle as needed
-          console.log("User is not logged in");
-          // You might want to redirect to a login page or display a message
         } else {
           // User is logged in, get the user ID and role
           const { userID, role } = data.result;
-          console.log("User ID:", userID);
-          console.log("User Role:", role);
 
           // Now you can navigate to the Recipes page with user information
           navigate("/Dashboard", { state: { userID, role } });
         }
       }
     } catch (error) {
-      console.error("Error fetching user session:", error);
+      console.error("Error fetching user session");
     }
   };
 

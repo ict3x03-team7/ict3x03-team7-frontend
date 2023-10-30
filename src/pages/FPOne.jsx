@@ -36,17 +36,11 @@ function FPOne(props) {
   const gotoFPTwo = async () => {
     if (validateEmail()) {
       try {
-        // log email to check
-        console.log(email);
-
         // Make an API call to verify the email
         const response = await axios.post(
           `http://localhost:8085/api/v1/auth/${email}/verify`,
           {}
         );
-
-        // log response
-        console.log(response);
 
         if (
           response.status === 200 &&
@@ -57,12 +51,11 @@ function FPOne(props) {
           navigate("/FPTwo", { state: { email } });
         } else {
           // Handle the case where email is not verified or other errors
-          console.log("Email verification failed.");
           setEmailError("Email verification failed.");
         }
       } catch (error) {
         // Handle network errors or API errors
-        console.error("API Error:", error);
+        console.error("API Error");
         setEmailError("Email verification failed.");
       }
     }
