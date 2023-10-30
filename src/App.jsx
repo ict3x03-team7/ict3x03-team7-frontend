@@ -15,6 +15,9 @@ import SearchRecipeResults from "./pages/SearchRecipeResults";
 import FPOne from "./pages/FPOne";
 import FPTwo from "./pages/FPTwo";
 import FPThree from "./pages/FPThree";
+import Enable2FA from "./pages/Enable2FA";
+import Redirect404 from "./pages/Redirect404";
+import Redirect500 from "./pages/Redirect500";
 
 const appStyle = {
   display: "flex",
@@ -47,15 +50,20 @@ const App = () => {
             <Route path="/LoginStudentStaff" element={<LoginStudentStaff />} />
             <Route path="/LoginVerification" element={<LoginVerification />} />
             <Route path="/Register" element={<Register />} />
+            <Route path="/Enable2FA" element={<Enable2FA />} />
 
             <Route path="/FPOne" element={<FPOne />} />
             <Route path="/FPTwo" element={<FPTwo />} />
             <Route path="/FPThree" element={<FPThree />} />
 
+            <Route path="/Redirect404" element={<Redirect404 />} />
+            <Route path="/Redirect500" element={<Redirect500 />} />
+
             <Route path="/Recipes" element={<Recipes />} />
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Logout" element={<Logout />} />
+
             <Route
               path="/SearchRecipeResults"
               element={<SearchRecipeResults />}

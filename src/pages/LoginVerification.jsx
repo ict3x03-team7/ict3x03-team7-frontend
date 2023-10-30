@@ -143,9 +143,7 @@ function LoginVerification(props) {
 
         <br />
 
-        <Alert severity="success">
-          We've sent a verification code to your Google Authenticator app!
-        </Alert>
+        <Alert severity="success">Check your Google Authenticator app!</Alert>
 
         <br />
         <br />

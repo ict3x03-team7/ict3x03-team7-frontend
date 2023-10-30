@@ -24,6 +24,13 @@ function SearchRecipeResults() {
     padding: "16px",
   };
 
+  // get recipe results
+  const location = useLocation();
+  console.log("results from search =>", location.state.searchURL);
+  const searchURL = location.state.searchURL;
+
+  let getSearchText = location.state.getSearchText;
+
   // State to track which recipe is clicked and open the modal
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -105,6 +112,8 @@ function SearchRecipeResults() {
         searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredientsString}`;
       }
 
+      getSearchText = searchText;
+
       axios
         .get(searchURL, {
           withCredentials: true,
@@ -122,7 +131,9 @@ function SearchRecipeResults() {
             setSearchTextError("");
           }
 
-          navigate("/SearchRecipeResults", { state: { searchURL } });
+          navigate("/SearchRecipeResults", {
+            state: { searchURL, getSearchText },
+          });
 
           setSearchText("");
         })
@@ -131,11 +142,6 @@ function SearchRecipeResults() {
         });
     }
   };
-
-  // get recipe results
-  const location = useLocation();
-  console.log("results from search =>", location.state.searchURL);
-  const searchURL = location.state.searchURL;
 
   // show recipe in the grids
   const [recipes, setRecipes] = useState([]);
@@ -196,7 +202,7 @@ function SearchRecipeResults() {
       </div>
       <div style={{ marginBottom: "100px" }}>
         <h1 style={{ textAlign: "left", marginBottom: "40px" }}>
-          Your Search Results
+          Your Search Results: {getSearchText}
         </h1>
 
         <Grid

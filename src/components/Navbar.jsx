@@ -49,7 +49,7 @@ function Navbar() {
           setSessionData(response.data);
         }
       } catch (error) {
-        console.error("Error fetching user session:", error);
+        console.error("Error fetching user session");
       }
     };
 
@@ -76,6 +76,14 @@ function Navbar() {
       const { userID } = sessionData.result;
       navigate("/Recipes", { state: { userID } });
     }
+  };
+
+  const gotoredirect404 = () => {
+    navigate("/Redirect404");
+  };
+
+  const gotoredirect500 = () => {
+    navigate("/Redirect500");
   };
 
   const handleLogout = () => {
@@ -106,6 +114,14 @@ function Navbar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <img src={logoImage} alt="Logo" style={logoStyle} />
           </Typography>
+
+          {/* <Button color="inherit" onClick={gotoredirect404}>
+            404{" "}
+          </Button>
+
+          <Button color="inherit" onClick={gotoredirect500}>
+            500{" "}
+          </Button> */}
 
           {sessionData && sessionData.result && (
             <>

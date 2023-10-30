@@ -150,7 +150,7 @@ function Register() {
       createUser(userData);
 
       // go to login again
-      navigate("/");
+      // navigate("/");
     }
   };
 
@@ -230,11 +230,14 @@ function Register() {
     // Password validation
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password must meet the specified criteria.");
-      valid = false;
-    } else if (password.length < 12) {
-      setPasswordError("Password must be at least 12 characters");
+
+    //   if (!passwordRegex.test(password)) {
+    //   setPasswordError("Password must meet the specified criteria.");
+    //   valid = false;
+    // } else
+
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
       valid = false;
     } else {
       setPasswordError("");
@@ -255,13 +258,38 @@ function Register() {
     const apiUrl = "http://localhost:8085/api/v1/user";
 
     try {
+      console.log("qew");
       const response = await axios.post(apiUrl, data);
+      console.log(response);
+
+      console.log("register =>", response);
+      console.log(response.status);
+
+      console.log("MFA", response.data.result.mfa_qr);
+      const get_MFA = response.data.result.mfa_qr;
+
       alert("User Account Created Successfully!");
       console.log(data);
       console.log(response);
       console.log("User created successfully:", response.data);
+
+      // once user create, show the QR Code
+      navigate("/Enable2FA", { state: { get_MFA } });
     } catch (error) {
       console.error("Error creating user:", error);
+      alert("Registration Failed! Please Try Again.");
+
+      // clear all the fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhoneNumber("");
+      setStudentID("");
+      setGender("");
+      setPassword("");
+      setConfirmedPassword("");
+
+      handleRemoveImage();
     }
   }
 

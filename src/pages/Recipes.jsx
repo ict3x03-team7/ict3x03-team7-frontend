@@ -22,6 +22,38 @@ function Recipes() {
     padding: "16px",
   };
 
+  const ingredients = [
+    "flour",
+    "sugar",
+    "butter",
+    "eggs",
+    "milk",
+    "salt",
+    "pepper",
+    "tomatoes",
+    "onions",
+    "garlic",
+    "cheese",
+    "chicken",
+    "rice",
+    "pasta",
+    "oil",
+    "lemon",
+    "potatoes",
+    "carrots",
+    "broccoli",
+    "spinach",
+    "cumin",
+    "coriander",
+    "basil",
+    "thyme",
+    "rosemary",
+    "parsley",
+    "cayenne",
+    "vanilla",
+    "honey",
+  ];
+
   // State to track which recipe is clicked and open the modal
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -37,7 +69,7 @@ function Recipes() {
     setOpenModal(false);
   };
 
-  const [searchText, setSearchText] = useState("salmon, cheese");
+  const [searchText, setSearchText] = useState();
   const [searchTextError, setSearchTextError] = useState("");
 
   let navigate = useNavigate();
@@ -81,15 +113,39 @@ function Recipes() {
     });
   };
 
+  // const [recipes, setRecipes] = useState([]);
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       "http://localhost:8085/api/v1/recipe/search?ingredients=salmon&ingredients=cheese",
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     )
+  //     .then((response) => {
+  //       setRecipes(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  // }, []);
+
   const [recipes, setRecipes] = useState([]);
   useEffect(() => {
+    // Randomly select two different ingredients
+    const randomIngredients = getRandomIngredients(ingredients, 2);
+
+    setSearchText(randomIngredients[0] + ", " + randomIngredients[1]);
+
+    // Format the URL with the random ingredients
+    const apiUrl = `http://localhost:8085/api/v1/recipe/search?ingredients=${randomIngredients[0]}&ingredients=${randomIngredients[1]}`;
+
+    console.log("Random =>", apiUrl);
+
     axios
-      .get(
-        "http://localhost:8085/api/v1/recipe/search?ingredients=salmon&ingredients=cheese",
-        {
-          withCredentials: true,
-        }
-      )
+      .get(apiUrl, {
+        withCredentials: true,
+      })
       .then((response) => {
         setRecipes(response.data.result);
       })
@@ -97,6 +153,16 @@ function Recipes() {
         console.error("Error fetching data:", error);
       });
   }, []);
+
+  // Function to get random ingredients
+  function getRandomIngredients(ingredientArray, count) {
+    if (count > ingredientArray.length) {
+      count = ingredientArray.length;
+    }
+
+    const shuffledIngredients = ingredientArray.sort(() => 0.5 - Math.random());
+    return shuffledIngredients.slice(0, count);
+  }
 
   const gotoSearchRecipeResults = () => {
     // Check if the search text is empty
@@ -137,7 +203,13 @@ function Recipes() {
             setSearchTextError("");
           }
 
-          navigate("/SearchRecipeResults", { state: { searchURL } });
+          // parse search result
+          const getSearchText = searchText;
+          console.log(getSearchText);
+
+          navigate("/SearchRecipeResults", {
+            state: { searchURL, getSearchText },
+          });
 
           setSearchText("");
         })

@@ -34,7 +34,7 @@ function FPOne(props) {
   };
 
   const gotoFPTwo = async () => {
-    if (verifyEmail()) {
+    if (validateEmail()) {
       try {
         // log email to check
         console.log(email);
@@ -68,7 +68,7 @@ function FPOne(props) {
     }
   };
 
-  const verifyEmail = () => {
+  const validateEmail = () => {
     let valid = true;
 
     // Email validation

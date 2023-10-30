@@ -87,13 +87,15 @@ function Profile() {
     let valid = true;
 
     // Password validation
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password must meet the specified criteria.");
-      valid = false;
-    } else if (password.length < 12) {
-      setPasswordError("Password must be at least 12 characters");
+    // const passwordRegex =
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+    // if (!passwordRegex.test(password)) {
+    //   setPasswordError("Password must meet the specified criteria.");
+    //   valid = false;
+    // } else
+
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
       valid = false;
     } else {
       setPasswordError("");
@@ -290,10 +292,29 @@ function Profile() {
                       </Typography>
                       {user.mfa_qr ? (
                         <div>
-                          <p>
-                            Scan the QR Code and Go to Google PLayStore or Apple
-                            Store to download Authenticator App to get your
-                            unique OTP.
+                          <p
+                            style={{
+                              textAlign: "center",
+                              marginTop: "10px",
+                              marginBottom: "10px",
+                            }}
+                          >
+                            Go to{" "}
+                            <a
+                              target="blank"
+                              href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US"
+                            >
+                              Google PlayStore
+                            </a>{" "}
+                            or{" "}
+                            <a
+                              target="blank"
+                              href="https://apps.apple.com/us/app/google-authenticator/id388497605"
+                            >
+                              Apple App Store
+                            </a>{" "}
+                            to download Authenticator App, and use this to scan
+                            the QR Code to get your OTP.
                           </p>
                           <img
                             src={user.mfa_qr}
@@ -301,15 +322,7 @@ function Profile() {
                             alt="2FA QR Code"
                           />
                         </div>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={enable2FA}
-                        >
-                          Enable MFA
-                        </Button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </div>
