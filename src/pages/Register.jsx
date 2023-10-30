@@ -7,7 +7,6 @@ import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Visibility from "@mui/icons-material/Visibility";
@@ -16,6 +15,8 @@ import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 function Register() {
   const containerStyle = {
@@ -34,18 +35,6 @@ function Register() {
     marginBottom: "50px",
   };
 
-  const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-  });
-
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -58,26 +47,12 @@ function Register() {
     event.preventDefault();
   };
 
-  const [isHoveredLink, setIsHoveredLink] = useState(false);
-  const handleLinkMouseEnter = () => {
-    setIsHoveredLink(true);
-  };
-  const handleLinkMouseLeave = () => {
-    setIsHoveredLink(false);
-  };
   const [isHoveredLink2, setIsHoveredLink2] = useState(false);
   const handleLinkMouseEnter2 = () => {
     setIsHoveredLink2(true);
   };
   const handleLinkMouseLeave2 = () => {
     setIsHoveredLink2(false);
-  };
-
-  let navigate = useNavigate();
-  const chooseLoginAccountButton = () => {
-    if (validateInputs()) {
-      navigate("/");
-    }
   };
 
   const [email, setEmail] = useState("");
@@ -104,6 +79,73 @@ function Register() {
 
   const [studentID, setStudentID] = useState("");
   const [studentIDError, setStudentIDError] = useState("");
+
+  // profile picture
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFilebase64, setSelectedFilebase64] = useState("");
+
+  // Function to handle file selection
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check if the selected file is an image or GIF
+      if (file.type.startsWith("image/") || file.type === "image/gif") {
+        setSelectedFile(file);
+        convertFile(file);
+      } else {
+        // Invalid file type, you can display an error message here
+        console.error("Invalid file type. Please select an image or GIF.");
+      }
+    }
+  };
+
+  // Function to remove the selected image
+  const handleRemoveImage = () => {
+    setSelectedFile(null); // Clear the selectedFile state to remove the image
+  };
+
+  function convertFile(file) {
+    if (file) {
+      const fileRef = file || "";
+      const fileType = fileRef.type || "";
+
+      const reader = new FileReader();
+      reader.readAsBinaryString(fileRef);
+
+      reader.onload = function (ev) {
+        // Convert it to base64
+        setSelectedFilebase64(
+          "data:" + fileType + ";base64," + btoa(ev.target.result)
+        );
+      };
+    }
+  }
+
+  // Example data
+  const userData = {
+    userID: uuidv4(),
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    password: password,
+    role: "Student",
+    gender: gender,
+    mobileNumber: phoneNumber,
+    lastLogin: null,
+    studentID: studentID,
+    fileBase64: selectedFile ? selectedFilebase64 : null,
+    fileName: selectedFile ? selectedFile.name : null,
+    fileSize: selectedFile ? selectedFile.size : null,
+    fileType: selectedFile ? selectedFile.type : null,
+  };
+
+  let navigate = useNavigate();
+  const chooseLoginAccountButton = () => {
+    if (validateInputs()) {
+      // Call the createUser function with the example data
+      createUser(userData);
+    }
+  };
 
   const validateInputs = () => {
     let valid = true;
@@ -181,11 +223,9 @@ function Register() {
     // Password validation
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password must meet the specified criteria.");
-      valid = false;
-    } else if (password.length < 12) {
-      setPasswordError("Password must be at least 12 characters");
+
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
       valid = false;
     } else {
       setPasswordError("");
@@ -202,27 +242,35 @@ function Register() {
     return valid;
   };
 
-  // profile picture
-  const [selectedFile, setSelectedFile] = useState(null);
+  async function createUser(data) {
+    const apiUrl = "http://localhost:8085/api/v1/user";
 
-  // Function to handle file selection
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Check if the selected file is an image or GIF
-      if (file.type.startsWith("image/") || file.type === "image/gif") {
-        setSelectedFile(file);
-      } else {
-        // Invalid file type, you can display an error message here
-        console.error("Invalid file type. Please select an image or GIF.");
-      }
+    try {
+      const response = await axios.post(apiUrl, data);
+
+      const get_MFA = response.data.result.mfa_qr;
+
+      alert("User Account Created Successfully!");
+
+      // once user create, show the QR Code
+      navigate("/Enable2FA", { state: { get_MFA } });
+    } catch (error) {
+      console.error("Error creating user");
+      alert("Registration Failed! Please Try Again.");
+
+      // clear all the fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhoneNumber("");
+      setStudentID("");
+      setGender("");
+      setPassword("");
+      setConfirmedPassword("");
+
+      handleRemoveImage();
     }
-  };
-
-  // Function to remove the selected image
-  const handleRemoveImage = () => {
-    setSelectedFile(null); // Clear the selectedFile state to remove the image
-  };
+  }
 
   return (
     <div style={containerStyle}>

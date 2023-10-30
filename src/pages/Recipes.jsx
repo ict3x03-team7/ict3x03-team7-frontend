@@ -6,7 +6,6 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import food1 from "../assets/recipe/food1.jpg";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -16,51 +15,44 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
+import axios from "axios";
 
 function Recipes() {
-  const recipeData = [
-    {
-      id: 1,
-      name: "Recipe 1",
-      imageUrl: food1,
-      ingredients: ["Tomato", "Onion", "Garlic"],
-    },
-    {
-      id: 2,
-      name: "Recipe 2",
-      imageUrl: food1,
-      ingredients: ["Chicken", "Rice", "Broccoli"],
-    },
-    {
-      id: 3,
-      name: "Recipe 3",
-      imageUrl: food1,
-      ingredients: ["Beef", "Potatoes", "Carrots"],
-    },
-    {
-      id: 4,
-      name: "Recipe 4",
-      imageUrl: food1,
-      ingredients: ["Tomato", "Onion", "Garlic"],
-    },
-    {
-      id: 5,
-      name: "Recipe 5",
-      imageUrl: food1,
-      ingredients: ["Chicken", "Rice", "Broccoli"],
-    },
-    {
-      id: 6,
-      name: "Recipe 6",
-      imageUrl: food1,
-      ingredients: ["Beef", "Potatoes", "Carrots"],
-    },
-    // Add more recipe data as needed
-  ];
-
   const gridItemStyle = {
     padding: "16px",
   };
+
+  const ingredients = [
+    "flour",
+    "sugar",
+    "butter",
+    "eggs",
+    "milk",
+    "salt",
+    "pepper",
+    "tomatoes",
+    "onions",
+    "garlic",
+    "cheese",
+    "chicken",
+    "rice",
+    "pasta",
+    "oil",
+    "lemon",
+    "potatoes",
+    "carrots",
+    "broccoli",
+    "spinach",
+    "cumin",
+    "coriander",
+    "basil",
+    "thyme",
+    "rosemary",
+    "parsley",
+    "cayenne",
+    "vanilla",
+    "honey",
+  ];
 
   // State to track which recipe is clicked and open the modal
   const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -77,7 +69,7 @@ function Recipes() {
     setOpenModal(false);
   };
 
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState();
   const [searchTextError, setSearchTextError] = useState("");
 
   let navigate = useNavigate();
@@ -89,15 +81,6 @@ function Recipes() {
       setSearchTextError("");
     } else {
       setSearchTextError("Search text should not exceed 100 characters");
-    }
-  };
-
-  const gotoSearchRecipeResults = () => {
-    // Check if the search text is empty
-    if (!searchText) {
-      setSearchTextError("Search text cannot be empty");
-    } else if (searchText.length <= 100) {
-      navigate("/SearchRecipeResults");
     }
   };
 
@@ -128,6 +111,92 @@ function Recipes() {
       top: 0,
       behavior: "smooth", // Add smooth scrolling behavior
     });
+  };
+
+  const [recipes, setRecipes] = useState([]);
+  useEffect(() => {
+    // Randomly select two different ingredients
+    const randomIngredients = getRandomIngredients(ingredients, 2);
+
+    setSearchText(randomIngredients[0] + ", " + randomIngredients[1]);
+
+    // Format the URL with the random ingredients
+    const apiUrl = `http://localhost:8085/api/v1/recipe/search?ingredients=${randomIngredients[0]}&ingredients=${randomIngredients[1]}`;
+
+    axios
+      .get(apiUrl, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setRecipes(response.data.result);
+      })
+      .catch((error) => {
+        console.error("Error fetching data");
+      });
+  }, []);
+
+  // Function to get random ingredients
+  function getRandomIngredients(ingredientArray, count) {
+    if (count > ingredientArray.length) {
+      count = ingredientArray.length;
+    }
+
+    const shuffledIngredients = ingredientArray.sort(() => 0.5 - Math.random());
+    return shuffledIngredients.slice(0, count);
+  }
+
+  const gotoSearchRecipeResults = () => {
+    // Check if the search text is empty
+    if (!searchText) {
+      setSearchTextError("Search text cannot be empty");
+    } else if (searchText.length <= 100) {
+      // Split the searchText by commas
+      const ingredients = searchText
+        .split(",")
+        .map((ingredient) => `ingredients=${ingredient.trim()}`);
+
+      let searchURL = "";
+
+      if (ingredients.length === 1) {
+        // If there's only one ingredient, don't split, just use it as is
+        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredients[0]}`;
+      } else {
+        // Join the formatted ingredients with '&'
+        const ingredientsString = ingredients.join("&");
+        // Construct the URL
+        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredientsString}`;
+      }
+
+      axios
+        .get(searchURL, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          // Set the state variable with the received data
+          setRecipes(response.data.result);
+
+          // Check if recipes are empty
+          if (response.data.result.length === 0) {
+            setSearchTextError(
+              "No recipes found. Please try different ingredients."
+            );
+          } else {
+            setSearchTextError("");
+          }
+
+          // parse search result
+          const getSearchText = searchText;
+
+          navigate("/SearchRecipeResults", {
+            state: { searchURL, getSearchText },
+          });
+
+          setSearchText("");
+        })
+        .catch((error) => {
+          console.error("Error fetching data");
+        });
+    }
   };
 
   return (
@@ -168,7 +237,11 @@ function Recipes() {
           </Button>
         </div>
         {searchTextError && (
-          <Alert severity="error" style={{ marginTop: "5px" }}>
+          <Alert
+            data-testid="searcherror"
+            severity="error"
+            style={{ marginTop: "5px" }}
+          >
             {searchTextError}
           </Alert>
         )}
@@ -178,44 +251,61 @@ function Recipes() {
           Recommended For You
         </h1>
 
-        <Grid container spacing={2}>
-          {recipeData.map((recipe) => (
-            <Grid item xs={12} sm={4} key={recipe.id} style={gridItemStyle}>
-              <Paper elevation={3}>
+        <Grid
+          container
+          spacing={2}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
+        >
+          {recipes.map((recipe, index) => (
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              key={index}
+              style={{
+                ...gridItemStyle,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Paper
+                elevation={3}
+                style={{ display: "flex", flexDirection: "column", flex: 1 }}
+              >
                 <img
-                  src={recipe.imageUrl}
-                  alt={recipe.name}
+                  src={recipe.recipeImage}
+                  alt={recipe.recipeName}
                   style={{ width: "100%" }}
                 />
                 <Grid
                   item
                   xs
-                  container
-                  direction="column"
-                  spacing={2}
-                  style={{ padding: "20px" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    padding: "20px",
+                    flex: 1,
+                  }}
                 >
-                  <Grid item xs>
-                    <Typography
-                      gutterBottom
-                      variant="subtitle1"
-                      component="div"
-                    >
-                      {recipe.name}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Lunch / Dinner
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      size="medium"
-                      onClick={() => handleOpenModal(recipe)}
-                    >
-                      View Recipe
-                    </Button>
-                  </Grid>
+                  <Typography gutterBottom variant="subtitle1" component="div">
+                    {recipe.recipeName}
+                  </Typography>
+
+                  <Typography variant="body2" gutterBottom>
+                    Meal Type: {recipe.mealType}
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    onClick={() => handleOpenModal(recipe)}
+                    style={{ marginTop: "auto" }}
+                  >
+                    View Recipe
+                  </Button>
                 </Grid>
               </Paper>
             </Grid>
@@ -224,127 +314,112 @@ function Recipes() {
       </div>
 
       {/* Recipe Modal */}
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="md"
-      >
-        {selectedRecipe && (
-          <>
-            <DialogTitle>{selectedRecipe.name}</DialogTitle>
-            <DialogContent>
-              {/* Display the image */}
-              <img
-                src={selectedRecipe.imageUrl}
-                alt={selectedRecipe.name}
-                style={{ width: "100%", marginBottom: "16px" }}
-              />
-              <Typography variant="h5">{selectedRecipe.name}</Typography>
+      {selectedRecipe ? (
+        <Dialog
+          open={openModal}
+          onClose={handleCloseModal}
+          fullWidth
+          maxWidth="md"
+        >
+          <DialogTitle>{selectedRecipe.recipeName}</DialogTitle>
+          <DialogContent>
+            <img
+              src={selectedRecipe.recipeImage}
+              alt={selectedRecipe.recipeName}
+              style={{ width: "100%", marginBottom: "16px" }}
+            />
+            <Typography variant="h5">{selectedRecipe.recipeName}</Typography>
 
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div style={{ marginTop: "15px", marginBottom: "35px" }}>
-                  <Typography variant="body2">Calories: 2047 </Typography>
-                  <Typography variant="body2">Serving Size: 10</Typography>
-                  <Typography variant="body2">
-                    Meal Type: Lunch / Dinner
-                  </Typography>
-                </div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div
-                  style={{
-                    backgroundColor: "#ADD8E6",
-                    width: "30%",
-                    height: "50px",
-                    textAlign: "center",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    style={{ fontSize: "26px", fontWeight: "bold" }}
-                  >
-                    Italian
-                  </Typography>
-                </div>
-                <div></div>
-              </div>
-
-              <Typography variant="h6" style={{ marginBottom: "15px" }}>
-                Ingredients
-              </Typography>
-
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={selectedRecipe.imageUrl}
-                  alt={selectedRecipe.name}
-                  style={{
-                    width: "8%",
-                    marginBottom: "16px",
-                    marginTop: "10px",
-                    marginRight: "30px",
-                  }}
-                />
-                <Typography variant="body2">Potato</Typography>
-              </div>
-              <hr />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={selectedRecipe.imageUrl}
-                  alt={selectedRecipe.name}
-                  style={{
-                    width: "8%",
-                    marginBottom: "16px",
-                    marginTop: "10px",
-                    marginRight: "30px",
-                  }}
-                />
-                <Typography variant="body2">Potato</Typography>
-              </div>
-              <hr />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={selectedRecipe.imageUrl}
-                  alt={selectedRecipe.name}
-                  style={{
-                    width: "8%",
-                    marginBottom: "16px",
-                    marginTop: "10px",
-                    marginRight: "30px",
-                  }}
-                />
-                <Typography variant="body2">Potato</Typography>
-              </div>
-
-              {/* {selectedRecipe.ingredients.map((ingredient, index) => (
-                <Typography variant="body2" key={index}>
-                  {ingredient}
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ marginTop: "15px", marginBottom: "35px" }}>
+                <Typography variant="body1">
+                  Calories: {Math.floor(selectedRecipe.calories)}
                 </Typography>
-              ))} */}
-
-              <Typography
-                variant="body2"
-                style={{ marginTop: "30px", marginBottom: "10px" }}
+                <Typography variant="body1">
+                  Serving Size: {selectedRecipe.serving}
+                </Typography>
+                <Typography variant="body1">
+                  Meal Type: {selectedRecipe.mealType}
+                </Typography>
+              </div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div
+                style={{
+                  backgroundColor: "#ADD8E6",
+                  width: "30%",
+                  height: "50px",
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                View Full Recipe Here: (add link here){" "}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseModal} color="primary">
-                Close
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+                <Typography
+                  variant="body2"
+                  style={{ fontSize: "26px", fontWeight: "bold" }}
+                >
+                  {selectedRecipe.cuisineType}
+                </Typography>
+              </div>
+              <div></div>
+            </div>
+
+            <Typography variant="h6" style={{ marginBottom: "15px" }}>
+              Ingredients
+            </Typography>
+
+            {selectedRecipe.ingredients.map((ingredient, index) => (
+              <div>
+                <div
+                  key={index}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <img
+                    src={ingredient.image}
+                    alt={ingredient.text}
+                    style={{
+                      width: "8%",
+                      marginBottom: "16px",
+                      marginTop: "10px",
+                      marginRight: "30px",
+                    }}
+                  />
+                  <Typography variant="body1">{ingredient.text}</Typography>
+                </div>
+                <hr style={{ borderColor: "#fafafa", borderWidth: "1px" }} />
+              </div>
+            ))}
+
+            <Typography
+              variant="h6"
+              style={{ marginTop: "30px", marginBottom: "5px" }}
+            >
+              View Full Recipe Here:
+            </Typography>
+            <Typography variant="body1" style={{ marginBottom: "10px" }}>
+              <a
+                href={selectedRecipe.sourceURL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {selectedRecipe.sourceURL}
+              </a>
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
 
       {/* Scroll to top button */}
       {showScrollButton && (
         <Button
+          data-testid="scroll-to-top-button"
           variant="contained"
           onClick={scrollToTop}
           style={{
@@ -355,7 +430,7 @@ function Recipes() {
             zIndex: 1000,
           }}
         >
-          <ArrowUpwardIcon /> {/* Replace text with the ArrowUpward icon */}
+          <ArrowUpwardIcon />
         </Button>
       )}
     </div>

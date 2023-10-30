@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -11,22 +11,50 @@ import {
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import logoImage from "../assets/SITLogo.png";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const navbarStyle = {
-  backgroundColor: "white", // White background color
-  color: "black", // Black text color
-  position: "fixed", // Sticky position
-  top: "0", // Stick to the top of the viewport
-  zIndex: "1000", // Set the z-index to ensure it's above other elements
+  backgroundColor: "white",
+  color: "black",
+  position: "fixed",
+  top: "0",
+  zIndex: "1000",
 };
 
 const logoStyle = {
-  maxHeight: "70px", // Adjust the logo size
+  maxHeight: "70px",
 };
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  let navigate = useNavigate();
+
+  // Define a state variable to store the session data
+  const [sessionData, setSessionData] = useState(null);
+
+  useEffect(() => {
+    // Fetch user session data when the component mounts
+    const fetchUserSession = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8085/api/v1/auth/session",
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          setSessionData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user session");
+      }
+    };
+
+    fetchUserSession();
+  }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -34,6 +62,39 @@ function Navbar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const gotoProfile = () => {
+    if (sessionData && sessionData.result) {
+      const { userID } = sessionData.result;
+      navigate("/Profile", { state: { userID } });
+    }
+  };
+
+  const gotoRecipe = () => {
+    if (sessionData && sessionData.result) {
+      const { userID } = sessionData.result;
+      navigate("/Recipes", { state: { userID } });
+    }
+  };
+
+  const handleLogout = () => {
+    axios
+      .post("http://localhost:8085/api/v1/auth/logout", null, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          navigate("/Logout");
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
+        } else {
+        }
+      })
+      .catch((error) => {
+        console.error("Logout error");
+      });
   };
 
   return (
@@ -44,57 +105,74 @@ function Navbar() {
             <img src={logoImage} alt="Logo" style={logoStyle} />
           </Typography>
 
-          <Link to="/Recipes" style={{ color: "black" }}>
-            <Button color="inherit">Search Recipe</Button>
-          </Link>
-
-          <Link to="/Dashboard" style={{ color: "black" }}>
-            <Button color="inherit">Admin Dashboard</Button>
-          </Link>
-
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={open}
-            onClose={handleClose}
-            style={{ marginTop: "0px" }}
-          >
-            <MenuItem onClick={handleClose}>
-              <Link
-                to="/Profile"
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                My Profile
-              </Link>
-            </MenuItem>
-
-            <MenuItem onClick={handleClose}>
-              <Link
-                to="/Logout"
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                Logout
-              </Link>
-            </MenuItem>
-          </Menu>
+          {sessionData && sessionData.result && (
+            <>
+              {sessionData.result.role === "Student" && (
+                <Link to="/Recipes" style={{ color: "black" }}>
+                  <Button color="inherit" onClick={gotoRecipe}>
+                    Search Recipe
+                  </Button>
+                </Link>
+              )}
+              {sessionData.result.role === "Admin" && (
+                <Link to="/Dashboard" style={{ color: "black" }}>
+                  <Button color="inherit">Admin Dashboard</Button>
+                </Link>
+              )}
+              <div>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={open}
+                  onClose={handleClose}
+                  style={{ marginTop: "0px" }}
+                >
+                  <MenuItem onClick={handleClose}>
+                    <Button
+                      onClick={gotoProfile}
+                      style={{
+                        color: "black",
+                        textDecoration: "none",
+                        textTransform: "none",
+                      }}
+                    >
+                      My Profile
+                    </Button>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <Button
+                      onClick={handleLogout}
+                      style={{
+                        color: "black",
+                        textDecoration: "none",
+                        textTransform: "none",
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </MenuItem>
+                </Menu>
+              </div>
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </div>

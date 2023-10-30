@@ -14,19 +14,20 @@ import "../css/style.css"; // Import custom CSS here
 import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
+import axios from "axios";
 
-function LoginStudentStaff() {
+function LoginStudentStaff(props) {
   const containerStyle = {
     display: "flex",
-    justifyContent: "center", // Center horizontally
-    alignItems: "center", // Center vertically
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: "10px",
   };
 
   const boxStyle = {
-    padding: "20px", // Add padding to the box
-    border: "1px solid grey", // Add a grey border
-    width: "50%", // Set the width of the box
+    padding: "20px",
+    border: "1px solid grey",
+    width: "50%",
     marginBottom: "50px",
   };
 
@@ -62,7 +63,8 @@ function LoginStudentStaff() {
     navigate("/");
   };
 
-  const loginVerificationButton = () => {
+  // original code
+  const loginVerificationButton = async () => {
     let valid = true;
 
     // Clear any previous error messages
@@ -78,6 +80,7 @@ function LoginStudentStaff() {
       setEmailError("");
     }
 
+    // password validation
     if (!password) {
       setPasswordError("Password is required");
       valid = false;
@@ -86,8 +89,65 @@ function LoginStudentStaff() {
     }
 
     if (valid) {
-      // Proceed with login verification logic only if valid is true
-      navigate("/LoginVerification");
+      try {
+        const response = await axios.post(
+          "http://localhost:8085/api/v1/auth/login",
+          {
+            email,
+            password,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        if (response.status === 200) {
+          if (
+            response.data.result.isSuccess &&
+            response.data.result.mfaEnabled
+          ) {
+            // both is true, go to loginVerification
+            gotoLoginVerification();
+          } else {
+            // check session
+            const response = await axios.get(
+              "http://localhost:8085/api/v1/auth/session",
+              {
+                withCredentials: true,
+              }
+            );
+
+            if (response.status === 200) {
+              const data = response.data;
+
+              if (data.Error) {
+                // User is not logged in
+              } else {
+                // User is logged in, get the user ID and role
+                const { userID, role } = data.result;
+
+                if (role === "Student") {
+                  // go to recipe directly
+                  gotoRecipe();
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 100);
+                } else if (role === "Admin") {
+                  // go to dashboard directly
+                  gotoDashboard();
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 100);
+                }
+              }
+            }
+          }
+        } else {
+          setPasswordError("Incorrect email or password");
+        }
+      } catch (error) {
+        console.error("API Error");
+        setPasswordError("An error occurred during login");
+      }
     }
   };
 
@@ -95,7 +155,64 @@ function LoginStudentStaff() {
     navigate("/Register");
   };
   const gotoForgetPassword1Page = () => {
-    navigate("/ForgetPassword2");
+    navigate("/FPOne");
+  };
+
+  const gotoLoginVerification = () => {
+    navigate("/LoginVerification", { state: { email } });
+  };
+
+  const gotoRecipe = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8085/api/v1/auth/session",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        if (data.Error) {
+          // User is not logged in, handle as needed
+        } else {
+          // User is logged in, get the user ID and role
+          const { userID, role } = data.result;
+
+          // Now you can navigate to the Recipes page with user information
+          navigate("/Recipes", { state: { userID, role } });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user session");
+    }
+  };
+
+  const gotoDashboard = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8085/api/v1/auth/session",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        if (data.Error) {
+        } else {
+          // User is logged in, get the user ID and role
+          const { userID, role } = data.result;
+
+          // Now you can navigate to the Recipes page with user information
+          navigate("/Dashboard", { state: { userID, role } });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user session");
+    }
   };
 
   return (
