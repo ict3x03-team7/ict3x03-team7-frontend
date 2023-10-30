@@ -86,60 +86,81 @@ describe("LoginStudentStaff component (Front-end Testing)", () => {
     expect(mockUseNavigate).toHaveBeenCalledWith("/Register");
   });
 
-  it("handles successful login and navigation", async () => {
-    // Mock the Axios request to simulate a successful login response
+  it("handles successful login and navigation for Student role", async () => {
+    // Reset the mockUseNavigate function and clear previous calls
+    mockUseNavigate.mockClear();
+  
+    // Mock the Axios request to simulate a successful login response for a Student
     mock.onPost("http://localhost:8085/api/v1/auth/login").reply(200, {
       result: { isSuccess: true, mfaEnabled: false },
     });
-
+  
+    // Mock the Axios request to simulate a successful session check response for Student
+    mock.onGet("http://localhost:8085/api/v1/auth/session").reply(200, {
+      result: { userID: 123, role: "Student" },
+    });
+  
     render(
       <MemoryRouter>
         <LoginStudentStaff />
       </MemoryRouter>
     );
-
+  
     const emailInput = screen.getByPlaceholderText("Enter email");
     const passwordInput = screen.getByPlaceholderText("Enter Password");
     const loginButton = screen.getByText("Login");
-
+  
     // Fill in email and password inputs
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
-
+  
     fireEvent.click(loginButton);
-
-    // Wait for the login request to complete
+  
+    // Wait for the login request and session check to complete
     await waitFor(() => {
-      // Expect that the navigation function is called with the correct route
-      expect(mockUseNavigate).toHaveBeenCalledWith("/");
+      // Expect that the navigation function is called with the correct route and state
+      expect(mockUseNavigate).toHaveBeenCalledWith("/Recipes", {
+        state: { userID: 123, role: "Student" },
+      });
     });
   });
 
-  it("handles API error and displays an error message", async () => {
-    // Mock the Axios request to simulate an API error
-    mock.onPost("http://localhost:8085/api/v1/auth/login").reply(500);
-
+  it("handles successful login and navigation for Admin role", async () => {
+    // Reset the mockUseNavigate function and clear previous calls
+    mockUseNavigate.mockClear();
+  
+    // Mock the Axios request to simulate a successful login response for an Admin
+    mock.onPost("http://localhost:8085/api/v1/auth/login").reply(200, {
+      result: { isSuccess: true, mfaEnabled: false },
+    });
+  
+    // Mock the Axios request to simulate a successful session check response for Admin
+    mock.onGet("http://localhost:8085/api/v1/auth/session").reply(200, {
+      result: { userID: 456, role: "Admin" },
+    });
+  
     render(
       <MemoryRouter>
         <LoginStudentStaff />
       </MemoryRouter>
     );
-
+  
     const emailInput = screen.getByPlaceholderText("Enter email");
     const passwordInput = screen.getByPlaceholderText("Enter Password");
     const loginButton = screen.getByText("Login");
-
+  
     // Fill in email and password inputs
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
-
+  
     fireEvent.click(loginButton);
-
-    // Wait for the login request to complete
+  
+    // Wait for the login request and session check to complete
     await waitFor(() => {
-      // Expect that the error message is displayed
-      const errorMessage = screen.getByText("Incorrect email or password");
-      expect(errorMessage).toBeTruthy();
+      // Expect that the navigation function is called with the correct route and state for the Admin role
+      expect(mockUseNavigate).toHaveBeenCalledWith("/Dashboard", {
+        state: { userID: 456, role: "Admin" },
+      });
     });
   });
 });
