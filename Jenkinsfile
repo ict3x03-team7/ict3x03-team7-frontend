@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    options {
+        // if the build takes more than 30 minutes, abort entire pipeline
+        timeout(time: 30, unit: 'MINUTES')
+    }
     
     stages {
         stage('Build') {
