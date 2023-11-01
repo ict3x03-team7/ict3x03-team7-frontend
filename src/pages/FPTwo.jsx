@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function FPTwo(props) {
   const containerStyle = {
@@ -44,13 +45,10 @@ function FPTwo(props) {
         const email = location.state.email; // Get the email from the location state
 
         // Make an API call to verify the OTP
-        const response = await axios.post(
-          "http://localhost:8085/api/v1/auth/verify",
-          {
-            email: email,
-            totp: otp,
-          }
-        );
+        const response = await axios.post(`${backendURL}/api/v1/auth/verify`, {
+          email: email,
+          totp: otp,
+        });
 
         if (response.status === 200 && response.data.result.isVerified) {
           // OTP is verified, navigate to FPThree

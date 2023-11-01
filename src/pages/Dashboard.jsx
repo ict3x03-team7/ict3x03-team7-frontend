@@ -19,6 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function Dashboard() {
   const columnStyle = {
@@ -126,7 +127,7 @@ function Dashboard() {
 
     // Make the PUT request to update the user status
     axios
-      .put(`http://localhost:8085/api/v1/user/${id}/unlock`, updatePayload, {
+      .put(`${backendURL}/api/v1/user/${id}/unlock`, updatePayload, {
         withCredentials: true,
       })
       .then((response) => {
@@ -160,12 +161,9 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8085/api/v1/user/all",
-          {
-            withCredentials: true, // Include withCredentials option
-          }
-        );
+        const response = await axios.get(`${backendURL}/api/v1/user/all`, {
+          withCredentials: true, // Include withCredentials option
+        });
 
         if (response.status === 200) {
           setUsers(response.data.result);
@@ -181,7 +179,7 @@ function Dashboard() {
 
   // Update Table after Deleting a Record
   useEffect(() => {
-    axios.get("http://localhost:8085/api/v1/users").then((response) => {
+    axios.get(`${backendURL}/api/v1/users`).then((response) => {
       if (response.status === 200) {
         setUsers(response.data.users);
         setUsersData(response.data.users);
@@ -204,7 +202,7 @@ function Dashboard() {
   const deleteAccount = async (userID) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8085/api/v1/user/admin/${userID}`,
+        `${backendURL}/api/v1/user/admin/${userID}`,
         {
           withCredentials: true,
         }

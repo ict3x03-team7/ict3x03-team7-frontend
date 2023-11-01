@@ -16,6 +16,7 @@ import DialogActions from "@mui/material/DialogActions";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function Recipes() {
   const gridItemStyle = {
@@ -121,7 +122,7 @@ function Recipes() {
     setSearchText(randomIngredients[0] + ", " + randomIngredients[1]);
 
     // Format the URL with the random ingredients
-    const apiUrl = `http://localhost:8085/api/v1/recipe/search?ingredients=${randomIngredients[0]}&ingredients=${randomIngredients[1]}`;
+    const apiUrl = `${backendURL}/api/v1/recipe/search?ingredients=${randomIngredients[0]}&ingredients=${randomIngredients[1]}`;
 
     axios
       .get(apiUrl, {
@@ -159,12 +160,12 @@ function Recipes() {
 
       if (ingredients.length === 1) {
         // If there's only one ingredient, don't split, just use it as is
-        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredients[0]}`;
+        searchURL = `${backendURL}/api/v1/recipe/search?${ingredients[0]}`;
       } else {
         // Join the formatted ingredients with '&'
         const ingredientsString = ingredients.join("&");
         // Construct the URL
-        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredientsString}`;
+        searchURL = `${backendURL}/api/v1/recipe/search?${ingredientsString}`;
       }
 
       axios

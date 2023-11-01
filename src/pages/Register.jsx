@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { backendURL } from "../App";
 
 function Register() {
   const containerStyle = {
@@ -243,7 +244,7 @@ function Register() {
   };
 
   async function createUser(data) {
-    const apiUrl = "http://localhost:8085/api/v1/user";
+    const apiUrl = `${backendURL}/api/v1/user`;
 
     try {
       const response = await axios.post(apiUrl, data);

@@ -7,6 +7,7 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function FPOne(props) {
   const containerStyle = {
@@ -38,7 +39,7 @@ function FPOne(props) {
       try {
         // Make an API call to verify the email
         const response = await axios.post(
-          `http://localhost:8085/api/v1/auth/${email}/verify`,
+          `${backendURL}/api/v1/auth/${email}/verify`,
           {}
         );
 

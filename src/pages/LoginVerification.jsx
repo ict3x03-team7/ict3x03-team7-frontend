@@ -11,6 +11,7 @@ import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function LoginVerification(props) {
   const containerStyle = {
@@ -58,7 +59,7 @@ function LoginVerification(props) {
       // Send a request to the backend to verify OTP
       const getparsedemail = location.state.email;
       const response = await axios.post(
-        "http://localhost:8085/api/v1/auth/login/verify",
+        `${backendURL}/api/v1/auth/login/verify`,
         {
           email: getparsedemail,
           totp: otp,
@@ -72,12 +73,9 @@ function LoginVerification(props) {
         // Successful verification
 
         // check session
-        const response = await axios.get(
-          "http://localhost:8085/api/v1/auth/session",
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${backendURL}/api/v1/auth/session`, {
+          withCredentials: true,
+        });
 
         if (response.status === 200) {
           const data = response.data;

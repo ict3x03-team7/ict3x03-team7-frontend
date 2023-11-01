@@ -15,6 +15,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function LoginStudentStaff(props) {
   const containerStyle = {
@@ -91,7 +92,7 @@ function LoginStudentStaff(props) {
     if (valid) {
       try {
         const response = await axios.post(
-          "http://localhost:8085/api/v1/auth/login",
+          `${backendURL}/api/v1/auth/login`,
           {
             email,
             password,
@@ -100,6 +101,7 @@ function LoginStudentStaff(props) {
             withCredentials: true,
           }
         );
+
         if (response.status === 200) {
           if (
             response.data.result.isSuccess &&
@@ -110,7 +112,7 @@ function LoginStudentStaff(props) {
           } else {
             // check session
             const response = await axios.get(
-              "http://localhost:8085/api/v1/auth/session",
+              `${backendURL}/api/v1/auth/session`,
               {
                 withCredentials: true,
               }
@@ -145,8 +147,11 @@ function LoginStudentStaff(props) {
           setPasswordError("Incorrect email or password");
         }
       } catch (error) {
-        console.error("API Error");
-        setPasswordError("An error occurred during login");
+        if (error.response.status === 403) {
+          setPasswordError(error.response.data.result.Locked);
+        } else if (error.response.status === 400) {
+          setPasswordError(error.response.data.result.Error);
+        }
       }
     }
   };
@@ -164,12 +169,9 @@ function LoginStudentStaff(props) {
 
   const gotoRecipe = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8085/api/v1/auth/session",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${backendURL}/api/v1/auth/session`, {
+        withCredentials: true,
+      });
 
       if (response.status === 200) {
         const data = response.data;
@@ -191,12 +193,9 @@ function LoginStudentStaff(props) {
 
   const gotoDashboard = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8085/api/v1/auth/session",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${backendURL}/api/v1/auth/session`, {
+        withCredentials: true,
+      });
 
       if (response.status === 200) {
         const data = response.data;

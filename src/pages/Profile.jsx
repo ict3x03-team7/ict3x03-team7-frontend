@@ -15,6 +15,7 @@ import Alert from "@mui/material/Alert";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function Profile() {
   const gridItemStyle = {
@@ -53,7 +54,7 @@ function Profile() {
   const updatePassword = async (userID, newPassword) => {
     try {
       const response = await axios.put(
-        `http://localhost:8085/api/v1/user/${userID}/updatePassword`,
+        `${backendURL}/api/v1/user/${userID}/updatePassword`,
         {
           newPassword: newPassword,
         },
@@ -104,12 +105,9 @@ function Profile() {
 
   const fetchUserByID = async (userID) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8085/api/v1/user/${userID}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${backendURL}/api/v1/user/${userID}`, {
+        withCredentials: true,
+      });
 
       if (response.status === 200) {
         const userData = response.data.result;
@@ -128,7 +126,7 @@ function Profile() {
   const enable2FA = async () => {
     try {
       const response = await axios.put(
-        "http://localhost:8085/api/v1/auth/enable",
+        `${backendURL}/api/v1/auth/enable`,
         {},
         {
           withCredentials: true,
@@ -164,7 +162,7 @@ function Profile() {
   const deleteUser = async (userID) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8085/api/v1/user/${userID}`,
+        `${backendURL}/api/v1/user/${userID}`,
         {
           withCredentials: true,
         }

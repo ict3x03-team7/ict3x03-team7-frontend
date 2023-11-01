@@ -20,6 +20,8 @@ import Redirect404 from "./pages/Redirect404";
 import Redirect500 from "./pages/Redirect500";
 import SessionExpired from "./pages/SessionExpired";
 
+export const backendURL = import.meta.env.VITE_BACKEND_URL;
+
 const appStyle = {
   display: "flex",
   flexDirection: "column",
