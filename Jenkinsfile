@@ -32,7 +32,7 @@ pipeline {
                 script {
                     def sshKey = credentials('SSHCredential') // Replace with your SSH credentials ID
                     def remoteUser = 'student56'
-                    def ec2HostName = '52.139.191.37'
+                    def ec2HostName = '52.221.187.45'
                     def remoteDirectory = '/home/student56/deployment'
 
                     // Copy the frontend code to the EC2 instance
