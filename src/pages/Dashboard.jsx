@@ -20,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import { backendURL } from "../App";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const columnStyle = {
@@ -39,6 +40,8 @@ function Dashboard() {
     marginRight: "20px",
     marginTop: "10px",
   };
+
+  let navigate = useNavigate();
 
   const handleReset = () => {
     try {
@@ -170,23 +173,14 @@ function Dashboard() {
         } else {
         }
       } catch (error) {
-        console.error("Error fetching user data");
+        console.error("Failed to fetch user data");
+        if (error.response.status === 401) {
+          navigate("/SessionExpired");
+        }
       }
     };
 
     fetchData();
-  }, []);
-
-  // Update Table after Deleting a Record
-  useEffect(() => {
-    axios.get(`${backendURL}/api/v1/users`).then((response) => {
-      if (response.status === 200) {
-        setUsers(response.data.users);
-        setUsersData(response.data.users);
-      } else {
-        console.error("Failed to fetch user data");
-      }
-    });
   }, []);
 
   // delete selected user account (for admin to delete only)
@@ -216,7 +210,6 @@ function Dashboard() {
           // Update users and usersData after deletion
           const updatedUsers = users.filter((user) => user.userID !== userID);
           setUsers(updatedUsers);
-          setUsersData(updatedUsers);
         } else {
           console.error("Failed to delete the user.");
         }
