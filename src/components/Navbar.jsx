@@ -13,6 +13,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import logoImage from "../assets/SITLogo.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { backendURL } from "../App";
 
 const navbarStyle = {
   backgroundColor: "white",
@@ -38,12 +39,9 @@ function Navbar() {
     // Fetch user session data when the component mounts
     const fetchUserSession = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8085/api/v1/auth/session",
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${backendURL}/api/v1/auth/session`, {
+          withCredentials: true,
+        });
 
         if (response.status === 200) {
           setSessionData(response.data);
@@ -80,7 +78,7 @@ function Navbar() {
 
   const handleLogout = () => {
     axios
-      .post("http://localhost:8085/api/v1/auth/logout", null, {
+      .post(`${backendURL}/api/v1/auth/logout`, null, {
         withCredentials: true,
       })
       .then((response) => {

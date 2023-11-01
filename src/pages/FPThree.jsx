@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function FPThree() {
   const containerStyle = {
@@ -61,7 +62,7 @@ function FPThree() {
 
         // Make an API call to reset the password
         const response = await axios.post(
-          "http://localhost:8085/api/v1/auth/resetpassword",
+          `${backendURL}/api/v1/auth/resetpassword`,
           {
             email: getparseemail,
             newPassword: password, // Use the new password entered by the user

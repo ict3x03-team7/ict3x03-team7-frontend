@@ -18,6 +18,9 @@ import FPThree from "./pages/FPThree";
 import Enable2FA from "./pages/Enable2FA";
 import Redirect404 from "./pages/Redirect404";
 import Redirect500 from "./pages/Redirect500";
+import SessionExpired from "./pages/SessionExpired";
+
+export const backendURL = import.meta.env.VITE_BACKEND_URL;
 
 const appStyle = {
   display: "flex",
@@ -58,6 +61,7 @@ const App = () => {
 
             <Route path="/Redirect404" element={<Redirect404 />} />
             <Route path="/Redirect500" element={<Redirect500 />} />
+            <Route path="/SessionExpired" element={<SessionExpired />} />
 
             <Route path="/Recipes" element={<Recipes />} />
             <Route path="/Dashboard" element={<Dashboard />} />

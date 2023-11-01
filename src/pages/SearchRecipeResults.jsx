@@ -17,6 +17,7 @@ import Alert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { backendURL } from "../App";
 
 function SearchRecipeResults() {
   const gridItemStyle = {
@@ -102,12 +103,12 @@ function SearchRecipeResults() {
 
       if (ingredients.length === 1) {
         // If there's only one ingredient, don't split, just use it as is
-        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredients[0]}`;
+        searchURL = `${backendURL}/api/v1/recipe/search?${ingredients[0]}`;
       } else {
         // Join the formatted ingredients with '&'
         const ingredientsString = ingredients.join("&");
         // Construct the URL
-        searchURL = `http://localhost:8085/api/v1/recipe/search?${ingredientsString}`;
+        searchURL = `${backendURL}/api/v1/recipe/search?${ingredientsString}`;
       }
 
       getSearchText = searchText;
