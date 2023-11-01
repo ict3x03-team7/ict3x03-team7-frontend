@@ -154,6 +154,9 @@ function SearchRecipeResults() {
       })
       .catch((error) => {
         console.error("Error fetching data:");
+        if (error.response.status === 401) {
+          navigate("/SessionExpired");
+        }
       });
   }, []);
 

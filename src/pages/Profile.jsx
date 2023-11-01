@@ -115,6 +115,9 @@ function Profile() {
       }
     } catch (error) {
       console.error("Error fetching user data");
+      if (error.response.status === 401) {
+        navigate("/SessionExpired");
+      }
     }
   };
 

@@ -133,6 +133,10 @@ function Recipes() {
       })
       .catch((error) => {
         console.error("Error fetching data");
+        console.error("Failed to fetch user data");
+        if (error.response.status === 401) {
+          navigate("/SessionExpired");
+        }
       });
   }, []);
 
