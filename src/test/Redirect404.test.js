@@ -8,7 +8,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockUsedNavigate,
 }));
 
-test("renders the 404 Not Found page with all elements", () => {
+test("renders all elements the 404 Not Found page", () => {
     render(<Redirect404 />);
     const title = screen.getByText("404 Not Found");
     const description = screen.getByText(/OOPS! We couldn't find your page/i);
@@ -19,11 +19,9 @@ test("renders the 404 Not Found page with all elements", () => {
     expect(button).toBeTruthy();
   });
   
-  test("navigates to the login page when the button is clicked", () => {
+  test("navigates to Login page when button clicked", () => {
     render(<Redirect404 />);
     const button = screen.getByText("Go to Login");
-  
-    // Simulate a button click
     fireEvent.click(button);
   });
 

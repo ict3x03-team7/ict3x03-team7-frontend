@@ -2,9 +2,9 @@ import React from "react";
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import Recipes from "../pages/Recipes";
 import axios from "axios";
-import { MemoryRouter } from 'react-router-dom'; // Import MemoryRouter
+import { MemoryRouter } from 'react-router-dom'; 
 
-// Mock useNavigate function
+
 const mockUseNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -13,11 +13,11 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock('../App', () => {
     return {
-      backendURL: '${backendURL}/api/v1/auth/session', // Replace with your desired mock URL
+      backendURL: '${backendURL}/api/v1/auth/session', 
     };
   });
 
-// Mock the Axios module
+
 jest.mock("axios");
 
 describe("Recipes Component", () => {
@@ -48,11 +48,9 @@ describe("Recipes Component", () => {
     const mockRecipes = [
       {
         recipeName: "Sample Recipe 1",
-        // Add other properties as needed
       },
       {
         recipeName: "Sample Recipe 2",
-        // Add other properties as needed
       },
     ];
 

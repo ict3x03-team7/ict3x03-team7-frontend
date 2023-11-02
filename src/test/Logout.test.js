@@ -19,7 +19,7 @@ describe("Logout Component", () => {
     render(<Logout />);
   });
 
-  it("clicking the 'Logged In Again' button calls chooseLoginAccountButton function", () => {
+  it("click 'Logged In Again' button calls chooseLoginAccountButton function", () => {
     const { getByText } = render(<Logout />);
     const loggedInAgainButton = getByText("Logged In Again");
     const chooseLoginAccountButton = jest.fn();

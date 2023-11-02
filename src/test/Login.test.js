@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import Login from "../pages/Login"; // Adjust the import path as needed
+import Login from "../pages/Login";
 
 const mockUsedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -13,7 +13,7 @@ describe("Login Component", () => {
     render(<Login />);
   });
 
-  it("clicking the 'Student' button calls loginButton function", () => {
+  it("click 'Student' button calls loginButton function", () => {
     const { getByText } = render(<Login />);
     const studentButton = getByText("Student");
     const loginButton = jest.fn();
@@ -22,7 +22,7 @@ describe("Login Component", () => {
     expect(loginButton).toHaveBeenCalled();
   });
 
-  it("clicking the 'Admin' button calls loginButton function", () => {
+  it("click 'Admin' button calls loginButton function", () => {
     const { getByText } = render(<Login />);
     const adminButton = getByText("Admin");
     const loginButton = jest.fn();
@@ -31,7 +31,7 @@ describe("Login Component", () => {
     expect(loginButton).toHaveBeenCalled();
   });
 
-  it("clicking the 'Sign Up' link calls RegisterLink function", () => {
+  it("click 'Sign Up' link calls RegisterLink function", () => {
     const { getByText } = render(<Login />);
     const signUpLink = getByText("Sign Up");
     const registerLink = jest.fn();
@@ -39,5 +39,4 @@ describe("Login Component", () => {
     fireEvent.click(signUpLink);
     expect(registerLink).toHaveBeenCalled();
   });
-
 });
