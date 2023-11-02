@@ -3,10 +3,10 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import Enable2FA from "../pages/Enable2FA";
 import { MemoryRouter } from 'react-router-dom';
 
-// Mock the backendURL variable by providing a mock URL
+
 jest.mock('../App', () => {
   return {
-    backendURL: '${backendURL}/api/v1/auth/session', // Replace with your desired mock URL
+    backendURL: '${backendURL}/api/v1/auth/session', 
   };
 });
 
@@ -61,9 +61,9 @@ describe("Enable2FA Component", () => {
     );
     const checkbox = screen.getByRole("checkbox");
     fireEvent.click(checkbox);
-    expect(checkbox).toHaveProperty("checked", true); // To check if it is checked
+    expect(checkbox).toHaveProperty("checked", true); // To check if checked
     fireEvent.click(checkbox);
-    expect(checkbox).toHaveProperty("checked", false); // To check if it is not checked
+    expect(checkbox).toHaveProperty("checked", false); // To check if not checked
   });
 
   it("display alert when 'Go to Login' is clicked without scanning QR code", () => {
