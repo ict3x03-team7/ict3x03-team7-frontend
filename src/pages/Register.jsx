@@ -155,8 +155,8 @@ function Register() {
   };
 
   let navigate = useNavigate();
-  const chooseLoginAccountButton = () => {
-    if (validateInputs()) {
+  const chooseLoginAccountButton = async() => {
+    if (validateInputs()===true) {
       // Call the createUser function with the example data
       createUser(userData);
     }
