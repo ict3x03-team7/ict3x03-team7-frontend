@@ -36,6 +36,20 @@ function Register() {
     marginBottom: "50px",
   };
 
+  const isCommonPassword = async (password) => {
+    try {
+      const response = await axios.get("src/commonPassword/default-passwords.txt");
+      const commonPasswords = response.data.split("\n");
+  
+      // Check if the entered password is in the list of common passwords
+      return commonPasswords.includes(password);
+    } catch (error) {
+      console.error("Error loading common passwords list");
+      return false; // Default to false in case of an error
+    }
+  };
+  
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -148,7 +162,7 @@ function Register() {
     }
   };
 
-  const validateInputs = () => {
+  const validateInputs = async() => {
     let valid = true;
 
     // First Name validation
@@ -221,16 +235,25 @@ function Register() {
       setEmailError("");
     }
 
-    // Password validation
+     // Password validation
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
 
     if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
-      valid = false;
+    setPasswordError("Password must be at least 8 characters");
+    valid = false;
     } else {
-      setPasswordError("");
+    // Check if the entered password is a common password
+    const isCommon = await isCommonPassword(password);
+      if (isCommon) {
+        setPasswordError("Password is too common and should be more unique.");
+        valid = false;
+      } else {
+        setPasswordError("");
+      }
     }
+
+      
 
     // Confirm password validation
     if (password !== confirmedPassword) {
@@ -241,7 +264,7 @@ function Register() {
     }
 
     return valid;
-  };
+    };
 
   async function createUser(data) {
     const apiUrl = `${backendURL}/api/v1/user`;
