@@ -38,9 +38,11 @@ function Register() {
 
   const isCommonPassword = async (password) => {
     try {
-      const response = await axios.get("src/commonPassword/default-passwords.txt");
+      const response = await axios.get(
+        "src/commonPassword/default-passwords.txt"
+      );
       const commonPasswords = response.data.split("\n");
-  
+
       // Check if the entered password is in the list of common passwords
       return commonPasswords.includes(password);
     } catch (error) {
@@ -48,7 +50,6 @@ function Register() {
       return false; // Default to false in case of an error
     }
   };
-  
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -155,14 +156,8 @@ function Register() {
   };
 
   let navigate = useNavigate();
-  const chooseLoginAccountButton = async() => {
-    if (validateInputs()===true) {
-      // Call the createUser function with the example data
-      createUser(userData);
-    }
-  };
 
-  const validateInputs = async() => {
+  const validateInputs = async () => {
     let valid = true;
 
     // First Name validation
@@ -235,25 +230,22 @@ function Register() {
       setEmailError("");
     }
 
-     // Password validation
-    const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
-
-    if (password.length < 8) {
-    setPasswordError("Password must be at least 8 characters");
-    valid = false;
+    // Password validation
+    if (password.length < 12 || password.length > 128) {
+      setPasswordError(
+        "Password cannot be less than 12 or more than 128 characters"
+      );
+      valid = false;
     } else {
-    // Check if the entered password is a common password
-    const isCommon = await isCommonPassword(password);
-      if (isCommon) {
+      // Check if the entered password is a common password
+      const isCommon = await isCommonPassword(password);
+      if (isCommon === true) {
         setPasswordError("Password is too common and should be more unique.");
         valid = false;
       } else {
         setPasswordError("");
       }
     }
-
-      
 
     // Confirm password validation
     if (password !== confirmedPassword) {
@@ -264,7 +256,7 @@ function Register() {
     }
 
     return valid;
-    };
+  };
 
   async function createUser(data) {
     const apiUrl = `${backendURL}/api/v1/user`;
@@ -295,6 +287,17 @@ function Register() {
       handleRemoveImage();
     }
   }
+
+  const chooseLoginAccountButton = async () => {
+    validateInputs().then((isValid) => {
+      if (isValid) {
+        // Call the createUser function with the example data
+        createUser(userData);
+      } else {
+        alert("Registration Failed! Please Try Again.");
+      }
+    });
+  };
 
   return (
     <div style={containerStyle}>

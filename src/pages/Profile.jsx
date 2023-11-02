@@ -22,6 +22,21 @@ function Profile() {
     padding: "16px",
   };
 
+  const isCommonPassword = async (password) => {
+    try {
+      const response = await axios.get(
+        "src/commonPassword/default-passwords.txt"
+      );
+      const commonPasswords = response.data.split("\n");
+
+      // Check if the entered password is in the list of common passwords
+      return commonPasswords.includes(password);
+    } catch (error) {
+      console.error("Error loading common passwords list");
+      return false; // Default to false in case of an error
+    }
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -80,14 +95,23 @@ function Profile() {
     updatePassword(userID, password);
   };
 
-  const handleSave_password = () => {
+  const handleSave_password = async () => {
     let valid = true;
 
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
+    if (password.length < 12 || password.length > 128) {
+      setPasswordError(
+        "Password cannot be less than 12 or more than 128 characters"
+      );
       valid = false;
     } else {
-      setPasswordError("");
+      // Check if the entered password is a common password
+      const isCommon = await isCommonPassword(password);
+      if (isCommon === true) {
+        setPasswordError("Password is too common and should be more unique.");
+        valid = false;
+      } else {
+        setPasswordError("");
+      }
     }
 
     // Confirm password validation
