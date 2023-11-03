@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { backendURL } from "../App";
+import "../css/style.css"; // Import custom CSS here
 
 function FPThree() {
   const containerStyle = {
@@ -31,6 +32,21 @@ function FPThree() {
     marginBottom: "50px",
   };
 
+  const isCommonPassword = async (password) => {
+    try {
+      const response = await axios.get(
+        "src/commonPassword/default-passwords.txt"
+      );
+      const commonPasswords = response.data.split("\n");
+
+      // Check if the entered password is in the list of common passwords
+      return commonPasswords.includes(password);
+    } catch (error) {
+      console.error("Error loading common passwords list");
+      return false; // Default to false in case of an error
+    }
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -47,6 +63,8 @@ function FPThree() {
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmedPasswordError, setConfirmedPasswordError] = useState("");
+
+  const [strength, setStrength] = useState(0);
 
   let navigate = useNavigate();
 
@@ -86,16 +104,30 @@ function FPThree() {
 
   const location = useLocation();
 
-  const verifyPassword = () => {
+  const verifyPassword = async () => {
     let valid = true;
 
     // Password validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
 
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password must meet the specified criteria.");
+      valid = false;
+    } else if (password.length < 12 || password.length > 128) {
+      setPasswordError(
+        "Password cannot be less than 12 or more than 128 characters"
+      );
       valid = false;
     } else {
-      setPasswordError("");
+      // Check if the entered password is a common password
+      const isCommon = await isCommonPassword(password);
+      if (isCommon === true) {
+        setPasswordError("Password is too common and should be more unique.");
+        valid = false;
+      } else {
+        setPasswordError("");
+      }
     }
 
     // Confirm password validation
@@ -107,6 +139,55 @@ function FPThree() {
     }
 
     return valid;
+  };
+
+  const calculatePasswordStrength = (password) => {
+    // Define criteria for password strength
+    const criteria = {
+      minLength: 8,
+      hasLower: /[a-z]/,
+      hasUpper: /[A-Z]/,
+      hasNumber: /[0-9]/,
+      hasSpecial: /[!@#\$%\^\&*\)\(+=._-]/,
+    };
+
+    let strength = 0;
+
+    // Check each criterion
+    if (password.length >= criteria.minLength) {
+      strength += 1;
+    }
+    if (criteria.hasLower.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasUpper.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasNumber.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasSpecial.test(password)) {
+      strength += 1;
+    }
+
+    return strength;
+  };
+
+  const getStrengthColor = (strength) => {
+    switch (strength) {
+      case 1:
+        return "red";
+      case 2:
+        return "orange";
+      case 3:
+        return "yellow";
+      case 4:
+        return "green";
+      case 5:
+        return "blue";
+      default:
+        return "gray";
+    }
   };
 
   return (
@@ -135,12 +216,24 @@ function FPThree() {
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onInput={(e) => {
-                if (e.target.value.length > 100) {
-                  e.target.value = e.target.value.slice(0, 100);
+              onChange={(e) => {
+                if (e.target.value.length === 0) {
+                  setPassword(e.target.value);
+                  setPasswordError("");
+
+                  setStrength(0);
+                } else if (
+                  e.target.value.length > 0 &&
+                  e.target.value.length <= 128
+                ) {
+                  setPassword(e.target.value);
+                  setPasswordError("");
+
+                  handleClickShowPassword();
+                  setStrength(calculatePasswordStrength(password));
+                } else {
+                  setPasswordError("Password should not exceed 128 characters");
                 }
-                setPassword(e.target.value);
               }}
               error={!!passwordError}
               endAdornment={
@@ -199,7 +292,23 @@ function FPThree() {
           </FormControl>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ marginTop: "20px" }}>
+          Password Strength: {strength} / 5
+          <div className="strength-meter">
+            <div
+              className={`strength-bar strength-${strength}`}
+              style={{ background: getStrengthColor(strength) }}
+            ></div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "30px",
+          }}
+        >
           <Button
             variant="outlined"
             size="medium"

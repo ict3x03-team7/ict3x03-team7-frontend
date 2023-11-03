@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { backendURL } from "../App";
+import "../css/style.css"; // Import custom CSS here
 
 function Register() {
   const containerStyle = {
@@ -77,6 +78,8 @@ function Register() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmedPasswordError, setConfirmedPasswordError] = useState("");
+
+  const [strength, setStrength] = useState(0);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -157,6 +160,38 @@ function Register() {
 
   let navigate = useNavigate();
 
+  const calculatePasswordStrength = (password) => {
+    // Define criteria for password strength
+    const criteria = {
+      minLength: 8,
+      hasLower: /[a-z]/,
+      hasUpper: /[A-Z]/,
+      hasNumber: /[0-9]/,
+      hasSpecial: /[!@#\$%\^\&*\)\(+=._-]/,
+    };
+
+    let strength = 0;
+
+    // Check each criterion
+    if (password.length >= criteria.minLength) {
+      strength += 1;
+    }
+    if (criteria.hasLower.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasUpper.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasNumber.test(password)) {
+      strength += 1;
+    }
+    if (criteria.hasSpecial.test(password)) {
+      strength += 1;
+    }
+
+    return strength;
+  };
+
   const validateInputs = async () => {
     let valid = true;
 
@@ -231,7 +266,13 @@ function Register() {
     }
 
     // Password validation
-    if (password.length < 12 || password.length > 128) {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_+={}[\]|:;"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_+={}[\]|:;"<>,./?]{10,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password must meet the specified criteria.");
+      valid = false;
+    } else if (password.length < 12 || password.length > 128) {
       setPasswordError(
         "Password cannot be less than 12 or more than 128 characters"
       );
@@ -259,9 +300,9 @@ function Register() {
   };
 
   async function createUser(data) {
-    const apiUrl = `${backendURL}/api/v1/user`;
-
     try {
+      const apiUrl = `${backendURL}/api/v1/user`;
+
       const response = await axios.post(apiUrl, data);
 
       const get_MFA = response.data.result.mfa_qr;
@@ -297,6 +338,23 @@ function Register() {
         alert("Registration Failed! Please Try Again.");
       }
     });
+  };
+
+  const getStrengthColor = (strength) => {
+    switch (strength) {
+      case 1:
+        return "red";
+      case 2:
+        return "orange";
+      case 3:
+        return "yellow";
+      case 4:
+        return "green";
+      case 5:
+        return "blue";
+      default:
+        return "gray";
+    }
   };
 
   return (
@@ -539,12 +597,23 @@ function Register() {
                 placeholder="Enter Password"
                 value={password}
                 onChange={(e) => {
-                  if (e.target.value.length <= 100) {
+                  if (e.target.value.length === 0) {
                     setPassword(e.target.value);
                     setPasswordError("");
+
+                    setStrength(0);
+                  } else if (
+                    e.target.value.length > 0 &&
+                    e.target.value.length <= 128
+                  ) {
+                    setPassword(e.target.value);
+                    setPasswordError("");
+
+                    handleClickShowPassword();
+                    setStrength(calculatePasswordStrength(password));
                   } else {
                     setPasswordError(
-                      "Password should not exceed 100 characters"
+                      "Password should not exceed 128 characters"
                     );
                   }
                 }}
@@ -608,6 +677,16 @@ function Register() {
                 </Alert>
               )}
             </FormControl>
+          </div>
+        </div>
+
+        <div style={{ marginTop: "20px" }}>
+          Password Strength: {strength} / 5
+          <div className="strength-meter">
+            <div
+              className={`strength-bar strength-${strength}`}
+              style={{ background: getStrengthColor(strength) }}
+            ></div>
           </div>
         </div>
 
