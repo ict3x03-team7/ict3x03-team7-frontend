@@ -53,61 +53,64 @@ function LoginVerification(props) {
     } else if (!/^[0-9]{6}$/.test(otp)) {
       setOtpError("Verification code should be a 6-digit number");
       return;
-    }
-
-    try {
-      // Send a request to the backend to verify OTP
-      const getparsedemail = location.state.email;
-      const response = await axios.post(
-        `${backendURL}/api/v1/auth/login/verify`,
-        {
-          email: getparsedemail,
-          totp: otp,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.status === 200) {
-        // Successful verification
-
-        // check session
-        const response = await axios.get(`${backendURL}/api/v1/auth/session`, {
-          withCredentials: true,
-        });
+    } else {
+      try {
+        // Send a request to the backend to verify OTP
+        const getparsedemail = location.state.email;
+        const response = await axios.post(
+          `${backendURL}/api/v1/auth/login/verify`,
+          {
+            email: getparsedemail,
+            totp: otp,
+          },
+          {
+            withCredentials: true,
+          }
+        );
 
         if (response.status === 200) {
-          const data = response.data;
+          // Successful verification
 
-          if (data.Error) {
-            // User is not logged in, handle as needed
-          } else {
-            // User is logged in, get the user ID and role
-            const { userID, role } = data.result;
+          // check session
+          const response = await axios.get(
+            `${backendURL}/api/v1/auth/session`,
+            {
+              withCredentials: true,
+            }
+          );
 
-            if (role === "Student") {
-              // go to recipe directly
-              navigate("/Recipes");
-              setTimeout(() => {
-                window.location.reload();
-              }, 100);
-            } else if (role === "Admin") {
-              // go to dashboard directly
-              navigate("/Dashboard");
-              setTimeout(() => {
-                window.location.reload();
-              }, 100);
+          if (response.status === 200) {
+            const data = response.data;
+
+            if (data.Error) {
+              // User is not logged in, handle as needed
+            } else {
+              // User is logged in, get the user ID and role
+              const { userID, role } = data.result;
+
+              if (role === "Student") {
+                // go to recipe directly
+                navigate("/Recipes");
+                setTimeout(() => {
+                  window.location.reload();
+                }, 100);
+              } else if (role === "Admin") {
+                // go to dashboard directly
+                navigate("/Dashboard");
+                setTimeout(() => {
+                  window.location.reload();
+                }, 100);
+              }
             }
           }
+        } else {
+          // Handle unsuccessful verification
+          setOtpError("Invalid OTP code");
         }
-      } else {
-        // Handle unsuccessful verification
-        setOtpError("Invalid OTP code");
+      } catch (error) {
+        console.error("API Error");
+        setOtpError("An error occurred during verification");
       }
-    } catch (error) {
-      console.error("API Error");
-      setOtpError("An error occurred during verification");
     }
   };
 

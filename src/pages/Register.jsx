@@ -315,6 +315,8 @@ function Register() {
       console.error("Error creating user");
       alert("Registration Failed! Please Try Again.");
 
+      navigate("/");
+
       // clear all the fields
       setFirstName("");
       setLastName("");
