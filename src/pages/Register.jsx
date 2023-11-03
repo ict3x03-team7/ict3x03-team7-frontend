@@ -315,8 +315,6 @@ function Register() {
       console.error("Error creating user");
       alert("Registration Failed! Please Try Again.");
 
-      navigate("/");
-
       // clear all the fields
       setFirstName("");
       setLastName("");
@@ -333,7 +331,7 @@ function Register() {
 
   const chooseLoginAccountButton = async () => {
     validateInputs().then((isValid) => {
-      if (isValid) {
+      if (isValid === true) {
         // Call the createUser function with the example data
         createUser(userData);
       } else {
@@ -357,6 +355,10 @@ function Register() {
       default:
         return "gray";
     }
+  };
+
+  const gotoLogin = () => {
+    navigate("/");
   };
 
   return (
@@ -701,7 +703,7 @@ function Register() {
             variant="outlined"
             size="medium"
             style={{ marginRight: "15px" }}
-            onClick={chooseLoginAccountButton}
+            onClick={gotoLogin}
           >
             Cancel
           </Button>
