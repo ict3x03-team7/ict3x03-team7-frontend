@@ -730,7 +730,7 @@ function Register() {
             }}
             onMouseEnter={handleLinkMouseEnter2}
             onMouseLeave={handleLinkMouseLeave2}
-            onClick={chooseLoginAccountButton}
+            onClick={gotoLogin}
           >
             Login Now!
           </Link>
