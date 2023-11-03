@@ -57,6 +57,7 @@ function LoginVerification(props) {
       try {
         // Send a request to the backend to verify OTP
         const getparsedemail = location.state.email;
+
         const response = await axios.post(
           `${backendURL}/api/v1/auth/login/verify`,
           {
@@ -72,35 +73,31 @@ function LoginVerification(props) {
           // Successful verification
 
           // check session
-          const response = await axios.get(
+          const response1 = await axios.get(
             `${backendURL}/api/v1/auth/session`,
             {
               withCredentials: true,
             }
           );
 
-          if (response.status === 200) {
-            const data = response.data;
+          if (response1.status === 200) {
+            const data = response1.data;
 
-            if (data.Error) {
-              // User is not logged in, handle as needed
-            } else {
-              // User is logged in, get the user ID and role
-              const { userID, role } = data.result;
+            // User is logged in, get the user ID and role
+            const { userID, role } = data.result;
 
-              if (role === "Student") {
-                // go to recipe directly
-                navigate("/Recipes");
-                setTimeout(() => {
-                  window.location.reload();
-                }, 100);
-              } else if (role === "Admin") {
-                // go to dashboard directly
-                navigate("/Dashboard");
-                setTimeout(() => {
-                  window.location.reload();
-                }, 100);
-              }
+            if (role === "Student") {
+              // go to recipe directly
+              navigate("/Recipes");
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
+            } else if (role === "Admin") {
+              // go to dashboard directly
+              navigate("/Dashboard");
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
             }
           }
         } else {
@@ -109,7 +106,9 @@ function LoginVerification(props) {
         }
       } catch (error) {
         console.error("API Error");
-        setOtpError("An error occurred during verification");
+        if (error.response.status === 401) {
+          setOtpError("Invalid OTP code");
+        }
       }
     }
   };
