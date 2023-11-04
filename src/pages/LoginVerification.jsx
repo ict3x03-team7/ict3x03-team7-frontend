@@ -46,6 +46,41 @@ function LoginVerification(props) {
   // Function to handle OTP verification
   const location = useLocation();
 
+  const handleSessionCheck = async () => {
+    try {
+      // Check the user's session
+      const response1 = await axios.get(`${backendURL}/api/v1/auth/session`, {
+        withCredentials: true,
+      });
+
+      if (response1.status === 200) {
+        const data = response1.data;
+
+        // User is logged in, get the user ID and role
+        const { userID, role } = data.result;
+
+        if (role === "Student") {
+          // Go to the recipe page directly
+          navigate("/Recipes");
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
+        } else if (role === "Admin") {
+          // Go to the dashboard directly
+          navigate("/Dashboard");
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
+        }
+      }
+    } catch (error) {
+      console.error("API Error");
+      if (error.response.status === 401) {
+        setOtpError("Invalid OTP code");
+      }
+    }
+  };
+
   const verifyOtp = async () => {
     if (!otp) {
       setOtpError("Verification code is required");
@@ -71,35 +106,7 @@ function LoginVerification(props) {
 
         if (response.status === 200) {
           // Successful verification
-
-          // check session
-          const response1 = await axios.get(
-            `${backendURL}/api/v1/auth/session`,
-            {
-              withCredentials: true,
-            }
-          );
-
-          if (response1.status === 200) {
-            const data = response1.data;
-
-            // User is logged in, get the user ID and role
-            const { userID, role } = data.result;
-
-            if (role === "Student") {
-              // go to recipe directly
-              navigate("/Recipes");
-              setTimeout(() => {
-                window.location.reload();
-              }, 100);
-            } else if (role === "Admin") {
-              // go to dashboard directly
-              navigate("/Dashboard");
-              setTimeout(() => {
-                window.location.reload();
-              }, 100);
-            }
-          }
+          handleSessionCheck();
         } else {
           // Handle unsuccessful verification
           setOtpError("Invalid OTP code");
@@ -159,13 +166,22 @@ function LoginVerification(props) {
         <br />
         <br />
 
-        <Button
+        {/* <Button
           variant="contained"
           size="medium"
           style={{ width: "100%" }}
           onClick={isVerified ? recipeButton : verifyOtp}
         >
           {isVerified ? "Continue" : "Submit"}
+        </Button> */}
+
+        <Button
+          variant="contained"
+          size="medium"
+          style={{ width: "100%" }}
+          onClick={verifyOtp}
+        >
+          Submit
         </Button>
 
         <br />
