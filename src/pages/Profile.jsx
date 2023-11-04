@@ -249,6 +249,11 @@ function Profile() {
     }
   };
 
+  const handlePasswordReset = () => {
+    setPassword("");
+    setConfirmedPassword("");
+  };
+
   return (
     <div>
       {user ? (
@@ -558,8 +563,9 @@ function Profile() {
                     variant="outlined"
                     size="medium"
                     style={{ marginRight: "20px" }}
+                    onclick={handlePasswordReset}
                   >
-                    Cancel
+                    Reset
                   </Button>
                   <Button
                     variant="contained"

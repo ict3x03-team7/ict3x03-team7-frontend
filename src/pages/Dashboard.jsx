@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 function Dashboard() {
   const columnStyle = {
     float: "left",
-    width: "48%",
+    width: "46%",
     padding: "15px",
     marginBottom: "10px",
     backgroundColor: "#e1f5fe",
